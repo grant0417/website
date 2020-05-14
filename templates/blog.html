@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+
+    <a href="{{ config.base_url }}">
+      <h1 class="title is-2 has-text-centered">Grant Gurvis</h1>
+    </a>
+
+    <br>
+
+    <p class="has-text-centered" style="margin-left: 1em; margin-right: 1em;">A Computer Science student at the
+      University of South
+      Florida
+      interested in Computer Science, Electronics, and Film.</p>
+
+    <br>
+    <hr>
+
+    <h1 class="title is-2 has-text-centered">
+      {{ section.title }} <span class="is-size-6" style="text-decoration: underline;"><a href="{{ get_url(path='/rss.xml') }}">RSS</a></span>
+    </h1>
+    <ul>
+      {% for page in section.pages %}
+      <li style="margin-bottom: 2.5em;">
+        <a href="{{ page.permalink }}">
+          <div class="is-uppercase has-text-weight-bold is-size-7">
+            {{ page.date | date(format="%b %d, %Y") }}
+            •
+            {{ page.reading_time }} min read
+          </div>
+          <span class="has-text-weight-bold is-size-3">{{ page.title }}</span>
+          <p>
+            {{ page.description }}
+          </p>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock content %}

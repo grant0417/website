@@ -1,0 +1,11 @@
++++
+title = "Rust Data Structures: Binary Search Tree"
+date = 2020-04-13
+description = "A useful data structure for fast searches and flexible insertions."
++++
+
+|            | Unsorted   | Sorted     | Balanced        |
+|------------|------------|------------|-----------------|
+| Insert     | \\(O(1)\\) | \\(O(n)\\) | \\(O(\log n)\\) |
+| Find Min   | \\(O(1)\\) | \\(O(1)\\) | \\(O(1)\\)      |
+| Delete Min | \\(O(n)\\) | \\(O(1)\\) | \\(O(\log n)\\) |
