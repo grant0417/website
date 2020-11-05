@@ -1,29 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container">
-        
-        <div class="is-uppercase">
-            <a href="{{ get_url(path='blog') }}">&lt; All articles</a>
-            <span style="float: right;">
-                {{ page.date | date(format="%b %d, %Y") }}
-                •
-                {{ page.reading_time }} min read
-            </span>
-        </div>
-        <hr>
-        <a href="#">
-         <h1 class="title is-2 has-text-centered has-text-weight-bold">
-            {{ page.title }}
-          </h1>
-        </a>
-        <br>
-        {% if page.description %}
-        <p class="is-italic is-size-4">
-            {{ page.description }}
-        </p>
-        {% endif %}
-        <br>
-        <div class="content">{{ page.content | safe }}</div>
-    </div>
+<div class="container">
+
+  <div class="is-uppercase">
+    <p>
+      <a href="{{ get_url(path='blog') }}" class="underline-on-hover">&lt; All articles</a>
+      <span style="float: right;">
+        {{ page.date | date(format="%b %d, %Y") }}
+        •
+        {{ page.reading_time }} min read
+      </span>
+    </p>
+  </div>
+  <hr>
+  <a href="#">
+    <h1 class="title is-2 has-text-centered has-text-weight-bold">
+      {{ page.title }}
+    </h1>
+  </a>
+  <br>
+  {% if page.description %}
+  <p class="is-italic is-size-4">
+    {{ page.description }}
+  </p>
+  {% endif %}
+  <br>
+  <div class="content">{{ page.content | safe }}</div>
+</div>
 {% endblock content %}

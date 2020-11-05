@@ -6,6 +6,6 @@ description = "A useful data structure for fast searches and flexible insertions
 
 |            | Unsorted   | Sorted     | Balanced        |
 |------------|------------|------------|-----------------|
-| Insert     | \\(O(1)\\) | \\(O(n)\\) | \\(O(\log n)\\) |
+| Insert     | \\(O(1)\\) | \\(O(n)\\) | \\(O(\lg n)\\) |
 | Find Min   | \\(O(1)\\) | \\(O(1)\\) | \\(O(1)\\)      |
-| Delete Min | \\(O(n)\\) | \\(O(1)\\) | \\(O(\log n)\\) |
+| Delete Min | \\(O(n)\\) | \\(O(1)\\) | \\(O(\lg n)\\) |

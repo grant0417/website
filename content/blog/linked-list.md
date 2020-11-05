@@ -6,15 +6,17 @@ description = "An implementation of one of the most rudimentary data structures 
 
 Most programming languages (including Rust) have a basic array type that can hold types but it lack features that are often needed by a programmer such as insertion and deletion of elements without creating a new array. Arrays are still often useful however due to their \\(O(1)\\) indexing, space efficiency, and memory locality.<sup id="lab1">[1](#ref1)</sup> However if these benefits are not needed once can opt for a structure such as a linked list to gain the needed insertion and deletion. 
 
+\\[ \mathcal{Hello} \\]
+
 ## [Basic Linked List](#basic-linked-list)
 
-The first thing for any data structure is to implement how the data is stored, often in Rust (and languages such as C) data is stored in a `struct` which is linked to other `struct`s via pointers. 
+The first thing for any data structure is to implement how the data is stored, often in Rust (and languages such as C) data is stored in a [`struct`](https://doc.rust-lang.org/std/keyword.struct.html) which is linked to other [`struct`](https://doc.rust-lang.org/std/keyword.struct.html)'s via pointers. 
 
 ```rust
 struct List {}
 ```
 
-In Rust however we use the smart pointer type of [`Box<T>`](https://doc.rust-lang.org/std/boxed/index.html) which prevents the dangers that raw pointer pose. This `Box<T>` will point to a type of `T` which will be our type that we define since the list needs to know about the next element. Unlike C we do not have `null` so we must wrap our `Box<T>` in an [`Option`](https://doc.rust-lang.org/std/option/index.html) so that we can know the end of the list has been reached. 
+In Rust however we use the smart pointer type of [`Box<T>`](https://doc.rust-lang.org/std/boxed/index.html) which prevents the dangers that raw pointer pose. This [`Box<T>`](https://doc.rust-lang.org/std/boxed/index.html) will point to a type of `T` which will be our type that we define since the list needs to know about the next element. Unlike C we do not have `null`, thankfully, so we must wrap our [`Box<T>`](https://doc.rust-lang.org/std/boxed/index.html) in an [`Option<T>`](https://doc.rust-lang.org/std/option/index.html) so that we can know the end of the list has been reached. 
 
 ```rust
 struct List {
@@ -106,13 +108,13 @@ The search loops through the list to the end looking for a matching item and ret
 
 #### [Deletion](#deletion)
 
-Once again at \\(O(n)\\) time we will delete an element. One issue however is that we can potentially delete the only element in the data structure, typically in C we would replace our list pointer with a null pointer but since we can not do that we must get creative. Unlike previous methods delete will take ownership of the list and return `Option<List>`. We also have an issue when it comes to ownership, how do we take 
+Once again at \\(O(n)\\) time we will delete an element. One issue however is that we can potentially delete the only element in the data structure, typically in C we would replace our list pointer with a null pointer but since we can not do that we must get creative. Unlike previous methods delete will take ownership of the list and return [`Option<List>`](https://doc.rust-lang.org/std/option/index.html). We also have an issue when it comes to ownership, how do we take 
 
 ## [Testing](#testing)
 
 Now lets use our new data structure to store some data, delete an element, and then search to make sure it works like we would expect.
 
-The first thing we want to do is make out list printable so we can make sure the state of our program is correct so add `#[derive(Debug)]` at the top of your `List` struct. Now lets write a simple linked list program.
+The first thing we want to do is make out list printable so we can make sure the state of our program is correct so add [`#[derive(Debug)`](https://doc.rust-lang.org/stable/rust-by-example/hello/print/print_debug.html) at the top of your `List` struct. Now lets write a simple linked list program.
 
 ```rust
 let mut l = List::new(32);
@@ -135,7 +137,7 @@ struct List<T> {
 }
 ```
 
-The rest of the implementation is basically replacing the `i32` type with the new `T` type.
+The rest of the implementation is basically replacing the [`i32`](https://doc.rust-lang.org/std/primitive.i32.html) type with the new `T` type.
 
 ## [Conclusion](#conclusion)
 
@@ -152,8 +154,3 @@ Skiena, Steven S. The Algorithm Design Manual. London: Springer, 2012. pp 66. [â
 
 <a name="ref2">2</a>: 
 Skiena, Steven S. The Algorithm Design Manual. London: Springer, 2012. pp 70. [â†©](#lab2)
-
-\\[
-    \frac{1}{2} (m_1 + m_2) v_0^2 \cos^2 \Theta + E = \frac{1}{2}
-    m_1 v_1^2 + \frac{1}{2} m_2  \frac{(m_1 + m_2) v_0 \cos \Theta - m_1 v_1}{m_2}^2
-\\]
