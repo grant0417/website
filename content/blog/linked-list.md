@@ -116,7 +116,7 @@ Now lets use our new data structure to store some data, delete an element, and t
 
 The first thing we want to do is make out list printable so we can make sure the state of our program is correct so add [`#[derive(Debug)`](https://doc.rust-lang.org/stable/rust-by-example/hello/print/print_debug.html) at the top of your `List` struct. Now lets write a simple linked list program.
 
-```rust
+```rust 
 let mut l = List::new(32);
 l.insert(12).insert(14).insert(43);
 println!("{:?}", l);

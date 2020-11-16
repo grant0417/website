@@ -3,65 +3,54 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        <h1 class="title is-2 has-text-centered">Grant Gurvis</h1>
+        <h1 class="centered-text">Grant Gurvis</h1>
 
-        <p class="has-text-centered" style="margin-left: 1em; margin-right: 1em;">
+        <p class="centered-text subtitle" style="max-width: 35rem; margin: auto;">
             A Computer Science student at the University of South Florida
             interested in Computer Science, Electronics, and Math.</p>
 
-        <br>
-
-        <!-- <div class="columns has-text-centered">
+        <!-- <div>
             <h1 class="column underline"><a href="/blog">Blog</a></h1>
         </div> -->
 
         <hr id="projects">
-        <br>
 
-        <h2 class="title is-3">Projects and Experiences</h2>
+        <h2>Projects and Experiences</h2>
 
-        <h3 class="title is-5">Ray Tracer <span style="float: right; margin-left: 20px;">April 2020&ndash;Present</span></h3>
+        <h3>Ray Tracer <span style="float: right; margin-left: 20px;">April 2020&ndash;Present</span></h3>
     
         <a href="https://github.com/grant0417/ray_tracer">
             <img src="imgs/cornell.jpg" alt="Cornell box with Stanford Dragon">
         </a>
     
-        <p> <a href="https://rust-ray-tracer.netlify.app/">(DEMO)</a> A path tracer that supports parallel execution, .obj loading, BVH acceleration 
+        <p class="subtitle"> <a href="https://rust-ray-tracer.netlify.app/">(DEMO)</a>
+            <a href="https://github.com/grant0417/ray_tracer">(GitHub)</a> A path tracer that supports parallel execution, .obj loading, BVH acceleration 
             with a command line interface that will support most file types for 
             output as well as a WASM based site. </p>
 
         <br>
 
-        <h3 class="title is-5">Vote Chair<span style="float: right; margin-left: 20px;">October 2020</span></h3>
-    
-        <a href="https://github.com/grant0417/vote-chair">
-            <img src="imgs/vote.jpg" alt="Cornell box with Stanford Dragon">
-        </a>
-    
-        <p> <a href="https://votechair.tech/">(LINK)</a> A voting website designed for the UCF Knight Hacks 2020 Hackaton. Designed the front end using 
-            React and back end using Express.</p>
-
-        <br>
-
-        <h3 class="title is-5">6502 Assembler and Emulator <span style="float: right; margin-left: 20px;">March 2020&ndash;May 2020</span></h3>
+        <h3>6502 Assembler and Emulator <span style="float: right; margin-left: 20px;">March 2020&ndash;May 2020</span></h3>
     
         <a href="https://github.com/grant0417/emu6502">
             <img src="imgs/6502.jpg" alt="6502">
         </a>
         
-        <p> The assembler compiles 6502 assembly into a binary for the emulator or hex codes with 
+        <p class="subtitle"> <a href="https://github.com/grant0417/assembler6502">(Assembler GitHub)</a> 
+            <a href="https://github.com/grant0417/emu6502">(Emulator GitHub)</a> The assembler compiles 6502 assembly into a binary for the emulator or hex codes with 
             debugging information. The emulator also supports all 6502 opcodes and addressing
             modes while being cycle-accurate. The CPU is easily extended via memory maps.</p>
     
         <br>
 
-        <h3 class="title is-5">USF SOAR's CubeSat Payload <span style="float: right; margin-left: 20px;">August 2019&ndash;Present</span></h3>
+        <h3>USF SOAR's CubeSat Payload <span style="float: right; margin-left: 20px;">August 2019&ndash;Present</span></h3>
     
         <a href="https://github.com/usfsoar/irec-avionics-payload-pcb">
             <img src="imgs/irec-pcb.jpg" alt="Image of PCB">
         </a>
     
-        <p> Lead a team in developing a payload to go to 30'000 ft. in the ESRA's 
+        <p class="subtitle"> 
+            <a href="https://github.com/usfsoar/irec-avionics-payload-pcb">(GitHub)</a> Lead a team in developing a payload to go to 30'000 ft. in the ESRA's 
             Intercollegiate Rocket Engineering Competition aboard a hybrid rocket 
             designed by the Society of Aeronautics and Rocketry at the University 
             of South Florida. Designed a custom PCB to transmit flight data to the
@@ -71,51 +60,60 @@
     
         <br>
 
-        <h3 class="title is-5">Machine Learning Meme Generator <span style="float: right; margin-left: 20px;">November 2019</span></h3>
+        <h3>Vote Chair<span style="float: right; margin-left: 20px;">October 2020</span></h3>
+    
+        <a href="https://github.com/grant0417/vote-chair">
+            <img src="imgs/vote.jpg" alt="Cornell box with Stanford Dragon">
+        </a>
+    
+        <p class="subtitle"> <a href="https://votechair.tech/">(LINK)</a> <a href="https://github.com/grant0417/vote-chair">(GitHub)</a> A voting website designed for the UCF Knight Hacks 2020 Hackaton. Designed the front end using 
+            React and back end using Express.</p>
+
+        <br>
+
+        <h3>Machine Learning Meme Generator <span style="float: right; margin-left: 20px;">November 2019</span></h3>
     
         <a href="https://github.com/grant0417/meme-bot">
             <img src="imgs/meme.jpg" alt="Some code from the project">
         </a>
     
     
-        <p> Used Keras and Tensorflow to predict what would follow based on training on
+        <p class="subtitle">
+            <a href="https://github.com/grant0417/meme-bot">(GitHub)</a>   Used Keras and Tensorflow to predict what would follow based on training on
             the book <i>Moby Dick</i>, then formated that prediction in a standard meme
             format. Won second place in the USF HackJam.</p>
 
         <br>
 
-        <h3 class="title is-5">Five Alive Films <span style="float: right; margin-left: 20px;">August 2015&ndash;August 2018</span></h3>
+        <h3>Five Alive Films <span style="float: right; margin-left: 20px;">August 2015&ndash;August 2018</span></h3>
         
         <img src="imgs/film.jpg" alt="Photo taken for film">    
         
-        <p>Worked for Five Alive Films editing films and creating promotional material. Edited as well as created
+        <p class="subtitle">Worked for Five Alive Films editing films and creating promotional material. Edited as well as created
             the title sequence for <a href="https://www.amazon.com/gp/video/detail/B07SQPHNDP">Missy's Musical Misadventure</a>.
             Also worked a documentry on a local sports team and other small projects.
         </p>
     
+        <hr id="links">        
 
-
-        <br id="links">
-        <hr>
-        <br>
-
-        
-
-        <h2 class="title is-3">Links & Contact</h2>
+        <h2>Links & Contact</h2>
 
         <div style="display: flex; text-align: center; flex-wrap: wrap;">
+            <h3 style="flex: auto; flex-basis: 0;">
+                <a href="https://github.com/grant0417 " class="underline">GitHub</a>
+            </h3>
 
-            <h1 class="underline" style="flex: auto; flex-basis: 0;">
-                <a href="https://github.com/grant0417 ">GitHub</a></h1>
+            <h3 style="flex: auto; flex-basis: 0;">
+                <a href="https://www.linkedin.com/in/grant-gurvis " class="underline">LinkedIn</a>
+            </h3>
 
-            <h1 class="underline" style="flex: auto; flex-basis: 0;">
-                <a href="https://www.linkedin.com/in/grant-gurvis ">LinkedIn</a></h1>
+            <h3 style="flex: auto; flex-basis: 0;">
+                <a href="https://github.com/grant0417/Resume/raw/master/grant_resume.pdf " class="underline">Resume</a>
+            </h3>
 
-            <h1 class="underline" style="flex: auto; flex-basis: 0;"><a
-                    href="https://github.com/grant0417/Resume/raw/master/grant_resume.pdf ">Resume</a></h1>
-
-            <h1 class="underline" style="flex: auto; flex-basis: 0;">
-                <a href="mailto:ggurvis@usf.edu ">Email</a></h1>
+            <h3 style="flex: auto; flex-basis: 0;">
+                <a href="mailto:ggurvis@usf.edu " class="underline">Email</a>
+            </h3>
         </div>
         <br>
     </div>

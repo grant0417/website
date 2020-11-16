@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-
-  <div class="is-uppercase">
-    <p>
-      <a href="{{ get_url(path='blog') }}" class="underline-on-hover">&lt; All articles</a>
+<div>
+  <div>
+    <p style="margin: 0;">
+      <a href="{{ get_url(path='blog') }}">&lt; All articles</a>
       <span style="float: right;">
         {{ page.date | date(format="%b %d, %Y") }}
         •
@@ -13,17 +12,18 @@
       </span>
     </p>
   </div>
-  <hr>
-  <a href="#">
-    <h1 class="title is-2 has-text-centered has-text-weight-bold">
+  <hr style="margin: 1em 0;">
+    <h1 class="centered-text" style="max-width: 35rem;">
+      <a href="#">
       {{ page.title }}
+    </a>
     </h1>
-  </a>
-  <br>
   {% if page.description %}
-  <p class="is-italic is-size-4">
-    {{ page.description }}
-  </p>
+  <h4 class="centered-text" style="max-width: 35rem;">
+    <i>
+      {{ page.description }}
+    </i>
+  </h4>
   {% endif %}
   <br>
   <div class="content">{{ page.content | safe }}</div>

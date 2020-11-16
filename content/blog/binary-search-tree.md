@@ -4,7 +4,7 @@ date = 2020-04-13
 description = "A useful data structure for fast searches and flexible insertions."
 +++
 
-|            | Unsorted   | Sorted     | Balanced        |
+| Operation  | Unsorted   | Sorted     | Balanced        |
 |------------|------------|------------|-----------------|
 | Insert     | \\(O(1)\\) | \\(O(n)\\) | \\(O(\lg n)\\) |
 | Find Min   | \\(O(1)\\) | \\(O(1)\\) | \\(O(1)\\)      |
