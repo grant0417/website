@@ -6,8 +6,6 @@ description = "An implementation of one of the most rudimentary data structures 
 
 Most programming languages (including Rust) have a basic array type that can hold types but it lack features that are often needed by a programmer such as insertion and deletion of elements without creating a new array. Arrays are still often useful however due to their \\(O(1)\\) indexing, space efficiency, and memory locality.<sup id="lab1">[1](#ref1)</sup> However if these benefits are not needed once can opt for a structure such as a linked list to gain the needed insertion and deletion. 
 
-\\[ \mathcal{Hello} \\]
-
 ## [Basic Linked List](#basic-linked-list)
 
 The first thing for any data structure is to implement how the data is stored, often in Rust (and languages such as C) data is stored in a [`struct`](https://doc.rust-lang.org/std/keyword.struct.html) which is linked to other [`struct`](https://doc.rust-lang.org/std/keyword.struct.html)'s via pointers. 
@@ -106,10 +104,6 @@ impl List {
 
 The search loops through the list to the end looking for a matching item and returns `Some(list)` if it finds an element that contains the item otherwise search returns `None`.
 
-#### [Deletion](#deletion)
-
-Once again at \\(O(n)\\) time we will delete an element. One issue however is that we can potentially delete the only element in the data structure, typically in C we would replace our list pointer with a null pointer but since we can not do that we must get creative. Unlike previous methods delete will take ownership of the list and return [`Option<List>`](https://doc.rust-lang.org/std/option/index.html). We also have an issue when it comes to ownership, how do we take 
-
 ## [Testing](#testing)
 
 Now lets use our new data structure to store some data, delete an element, and then search to make sure it works like we would expect.
@@ -120,9 +114,8 @@ The first thing we want to do is make out list printable so we can make sure the
 let mut l = List::new(32);
 l.insert(12).insert(14).insert(43);
 println!("{:?}", l);
-let l = l.delete(12).unwrap();
-println!("{:?}", l);
-println!{""}
+let s = l.search(12).unwrap();
+println!("{:?}", s);
 ```
 
 ## [Generic](#generic)
@@ -131,7 +124,10 @@ Going forward all the data structures will be implemented generically, to do thi
 
 ```rust 
 #[derive(Debug)]
-struct List<T> {
+struct List<T> 
+where 
+    T: Eq
+{
     next: Option<Box<List<T>>>,
     item: T,
 }
@@ -145,7 +141,7 @@ This is mostly just an academic exercise though since Rust comes with great [`st
 
 ## [Full Implementation](#full-implementation)
 
-The full implementation is available on [GitHub Gist](http://s.com).
+The full implementation is available on [GitHub Gist](https://gist.github.com/grant0417/c2d945ab040a0de16bfd16c308d29c22#file-linked_list-rs).
 
 ## [Footnotes](#footnotes)
 
