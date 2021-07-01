@@ -22,23 +22,19 @@
     <h1 class="title is-2 has-text-centered">
       {{ section.title }} <span class="is-size-6" style="text-decoration: underline;"><a href="{{ get_url(path='/rss.xml') }}">RSS</a></span>
     </h1>
-    <ul>
       {% for page in section.pages %}
-      <li style="margin-bottom: 2.5em;">
         <a href="{{ page.permalink }}">
           <p class="is-uppercase has-text-weight-bold is-size-7">
             {{ page.date | date(format="%b %d, %Y") }}
             •
             {{ page.reading_time }} min read
           </p>
-          <p class="has-text-weight-bold is-size-3 underline-on-hover">{{ page.title }}</p>
+          <h2 class="has-text-weight-bold is-size-3 underline-on-hover">{{ page.title }}</h2>
           <p>
             {{ page.description }}
           </p>
         </a>
-      </li>
       {% endfor %}
-    </ul>
   </div>
 </section>
 {% endblock content %}

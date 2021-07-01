@@ -1,31 +1,25 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div>
   <div>
-    <p style="margin: 0;">
+    <p style="margin: 0">
       <a href="{{ get_url(path='blog') }}">&lt; All articles</a>
-      <span style="float: right;">
-        {{ page.date | date(format="%b %d, %Y") }}
-        •
-        {{ page.reading_time }} min read
+      <span style="float: right">
+        {{ page.date | date(format="%b %d, %Y") }} • {{ page.reading_time }} min
+        read
       </span>
     </p>
   </div>
-  <hr style="margin: 1em 0;">
-    <h1 class="centered-text" style="max-width: 35rem;">
-      <a href="#">
-      {{ page.title }}
-    </a>
-    </h1>
+  <hr style="margin: 1em 0" />
+  <h1 class="centered-text" style="max-width: 35rem">
+    <a href="#"> {{ page.title }} </a>
+  </h1>
   {% if page.description %}
-  <h4 class="centered-text" style="max-width: 35rem;">
-    <i>
-      {{ page.description }}
-    </i>
-  </h4>
+  <p class="centered-text" style="max-width: 35rem; margin: auto; font-size: 1.2em">
+    <i> {{ page.description }} </i>
+  </p>
   {% endif %}
-  <br>
+  <p class="centered-text" style="font-size: 1.4em">By Grant Gurvis</p>
+  <br />
   <div class="content">{{ page.content | safe }}</div>
 </div>
 {% endblock content %}

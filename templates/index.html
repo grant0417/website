@@ -1,121 +1,172 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <section class="section">
     <div class="container">
         <h1 class="centered-text">Grant Gurvis</h1>
 
-        <p class="centered-text subtitle" style="max-width: 35rem; margin: auto;">
-            A Computer Science student at the University of South Florida
-            interested in Computer Science, Electronics, and Math.</p>
+        <p class="centered-text subtitle" style="max-width: 35rem; margin: auto">
+            A Computer Science student at the University of South Florida interested
+            in Computer Science, Electronics, and Math.
+        </p>
 
         <!-- <div>
             <h1 class="column underline"><a href="/blog">Blog</a></h1>
         </div> -->
 
-        <hr id="projects">
+        <hr id="programming-projects" />
 
-        <h2>Projects and Experiences</h2>
+        <h2>Programming Projects</h2>
 
-        <h3>Ray Tracer <span style="float: right; margin-left: 20px;">April 2020&ndash;Present</span></h3>
-    
-        <a href="https://github.com/grant0417/ray_tracer">
-            <img src="imgs/cornell.jpg" alt="Cornell box with Stanford Dragon">
+        <h3>
+            Chess AI
+            <!-- <span style="float: right; margin-left: 20px;">Febuary 2021&ndash;Present</span> -->
+        </h3>
+
+        <a href="https://github.com/grant0417/chess-ai">
+            <img src="imgs/chess.jpg" alt="Chess Board" />
         </a>
-    
-        <p class="subtitle"> <a href="https://rust-ray-tracer.netlify.app/">(DEMO)</a>
-            <a href="https://github.com/grant0417/ray_tracer">(GitHub)</a> A path tracer that supports parallel execution, .obj loading, BVH acceleration 
-            with a command line interface that will support most file types for 
-            output as well as a WASM based site. </p>
 
-        <br>
-
-        <h3>6502 Assembler and Emulator <span style="float: right; margin-left: 20px;">March 2020&ndash;May 2020</span></h3>
-    
-        <a href="https://github.com/grant0417/emu6502">
-            <img src="imgs/6502.jpg" alt="6502">
-        </a>
-        
-        <p class="subtitle"> <a href="https://github.com/grant0417/assembler6502">(Assembler GitHub)</a> 
-            <a href="https://github.com/grant0417/emu6502">(Emulator GitHub)</a> The assembler compiles 6502 assembly into a binary for the emulator or hex codes with 
-            debugging information. The emulator also supports all 6502 opcodes and addressing
-            modes while being cycle-accurate. The CPU is easily extended via memory maps.</p>
-    
-        <br>
-
-        <h3>USF SOAR's CubeSat Payload <span style="float: right; margin-left: 20px;">August 2019&ndash;Present</span></h3>
-    
-        <a href="https://github.com/usfsoar/irec-avionics-payload-pcb">
-            <img src="imgs/irec-pcb.jpg" alt="Image of PCB">
-        </a>
-    
-        <p class="subtitle"> 
-            <a href="https://github.com/usfsoar/irec-avionics-payload-pcb">(GitHub)</a> Lead a team in developing a payload to go to 30'000 ft. in the ESRA's 
-            Intercollegiate Rocket Engineering Competition aboard a hybrid rocket 
-            designed by the Society of Aeronautics and Rocketry at the University 
-            of South Florida. Designed a custom PCB to transmit flight data to the
-            ground live as well as the CubeSat form factor enclosure for the PCB.
-            Also created the <a href="imgs/patch.png">patch</a> for the team as 
-            well as a <a href="https://soarsite.netlify.app/">new site for the organization</a>.</p>
-    
-        <br>
-
-        <h3>Vote Chair<span style="float: right; margin-left: 20px;">October 2020</span></h3>
-    
-        <a href="https://github.com/grant0417/vote-chair">
-            <img src="imgs/vote.jpg" alt="Cornell box with Stanford Dragon">
-        </a>
-    
-        <p class="subtitle"> <a href="https://votechair.tech/">(LINK)</a> <a href="https://github.com/grant0417/vote-chair">(GitHub)</a> A voting website designed for the UCF Knight Hacks 2020 Hackaton. Designed the front end using 
-            React and back end using Express.</p>
-
-        <br>
-
-        <h3>Machine Learning Meme Generator <span style="float: right; margin-left: 20px;">November 2019</span></h3>
-    
-        <a href="https://github.com/grant0417/meme-bot">
-            <img src="imgs/meme.jpg" alt="Some code from the project">
-        </a>
-    
-    
         <p class="subtitle">
-            <a href="https://github.com/grant0417/meme-bot">(GitHub)</a>   Used Keras and Tensorflow to predict what would follow based on training on
-            the book <i>Moby Dick</i>, then formated that prediction in a standard meme
-            format. Won second place in the USF HackJam.</p>
-
-        <br>
-
-        <h3>Five Alive Films <span style="float: right; margin-left: 20px;">August 2015&ndash;August 2018</span></h3>
-        
-        <img src="imgs/film.jpg" alt="Photo taken for film">    
-        
-        <p class="subtitle">Worked for Five Alive Films editing films and creating promotional material. Edited as well as created
-            the title sequence for <a href="https://www.amazon.com/gp/video/detail/B07SQPHNDP">Missy's Musical Misadventure</a>.
-            Also worked a documentry on a local sports team and other small projects.
+            <a href="https://github.com/grant0417/chess-ai">(GitHub)</a>
+            A Chess AI that is still quite early in development, it can currently
+            generate millions of moves per second to analyze. The program uses a
+            bitboard based implementations that
         </p>
-    
-        <hr id="links">        
+
+        <h3>
+            Ray Tracer
+            <!-- <span style="float: right; margin-left: 20px;">April 2020&ndash;Present</span> -->
+        </h3>
+
+        <a href="https://github.com/grant0417/ray_tracer">
+            <img src="imgs/cornell.jpg" alt="Cornell box with Stanford Dragon" />
+        </a>
+
+        <p class="subtitle">
+            <a href="https://rust-ray-tracer.netlify.app/">(DEMO)</a>
+            <a href="https://github.com/grant0417/ray_tracer">(GitHub)</a> A path
+            tracer that supports parallel execution, .obj loading, BVH acceleration
+            with a command line interface that will support most file types for output
+            as well as a WASM based site.
+        </p>
+
+        <br />
+
+        <h3>
+            6502 Assembler and Emulator
+            <!-- <span style="float: right; margin-left: 20px;">March 2020&ndash;May 2020</span> -->
+        </h3>
+
+        <a href="https://github.com/grant0417/emu6502">
+            <img src="imgs/6502.jpg" alt="6502" />
+        </a>
+
+        <p class="subtitle">
+            <a href="https://github.com/grant0417/assembler6502">(Assembler GitHub)</a>
+            <a href="https://github.com/grant0417/emu6502">(Emulator GitHub)</a> The
+            assembler compiles 6502 assembly into a binary for the emulator or hex
+            codes with debugging information. The emulator also supports all 6502
+            opcodes and addressing modes while being cycle-accurate. The CPU is easily
+            extended via memory maps.
+        </p>
+
+        <br />
+
+        <h3>
+            USF SOAR's CubeSat Payload
+            <!--  <span style="float: right; margin-left: 20px;">August 2019&ndash;Present</span> -->
+        </h3>
+
+        <a href="https://github.com/usfsoar/irec-avionics-payload-pcb">
+            <img src="imgs/irec-pcb-logo.jpg" alt="Image of PCB" />
+        </a>
+
+        <p class="subtitle">
+            <a href="https://github.com/usfsoar/irec-avionics-payload-pcb">(GitHub)</a>
+            Lead a team in developing a payload to go to 30'000 ft. in the ESRA's
+            Intercollegiate Rocket Engineering Competition aboard a hybrid rocket
+            designed by the Society of Aeronautics and Rocketry at the University of
+            South Florida. Designed a custom PCB to transmit flight data to the ground
+            live as well as the CubeSat form factor enclosure for the PCB. Also
+            created the <a href="imgs/patch.png">patch</a> for the team as well as a
+            <a href="https://soarsite.netlify.app/">new site for the organization</a>.
+        </p>
+
+        <br />
+
+        <h3>
+            Vote Chair
+            <!-- <span style="float: right; margin-left: 20px">October 2020</span> -->
+        </h3>
+
+        <a href="https://github.com/grant0417/vote-chair">
+            <img src="imgs/vote.jpg" alt="Cornell box with Stanford Dragon" />
+        </a>
+
+        <p class="subtitle">
+            <a href="https://votechair.tech/">(LINK)</a>
+            <a href="https://github.com/grant0417/vote-chair">(GitHub)</a> A voting
+            website designed for the UCF Knight Hacks 2020 Hackaton. Designed the
+            front end using React and back end using Express.
+        </p>
+
+        <br />
+
+        <h3>
+            Machine Learning Meme Generator
+            <!-- <span style="float: right; margin-left: 20px">November 2019</span> -->
+        </h3>
+
+        <a href="https://github.com/grant0417/meme-bot">
+            <img src="imgs/meme.jpg" alt="Some code from the project" />
+        </a>
+
+        <p class="subtitle">
+            <a href="https://github.com/grant0417/meme-bot">(GitHub)</a> Used Keras
+            and Tensorflow to predict what would follow based on training on the book
+            <i>Moby Dick</i>, then formated that prediction in a standard meme format.
+            Won second place in the USF HackJam.
+        </p>
+
+        <br id="artistic-projects" />
+
+        <h2>Artistic Projects</h2>
+
+        <h3>
+            Five Alive Films
+            <!-- <span style="float: right; margin-left: 20px">August 2015&ndash;August 2018</span> -->
+        </h3>
+
+        <img src="imgs/film.jpg" alt="Photo taken for film" />
+
+        <p class="subtitle">
+            Worked for Five Alive Films editing films and creating promotional
+            material. Edited as well as created the title sequence for
+            <a href="https://www.amazon.com/gp/video/detail/B07SQPHNDP">Missy's Musical Misadventure</a>. Also worked a
+            documentry on a local sports team and other small
+            projects.
+        </p>
+
+        <hr id="links" />
 
         <h2>Links & Contact</h2>
 
-        <div style="display: flex; text-align: center; flex-wrap: wrap;">
-            <h3 style="flex: auto; flex-basis: 0; padding: .5em;">
+        <div style="display: flex; text-align: center; flex-wrap: wrap">
+            <h3 style="flex: auto; flex-basis: 0; padding: 0.5em">
                 <a href="https://github.com/grant0417 " class="underline">GitHub</a>
             </h3>
 
-            <h3 style="flex: auto; flex-basis: 0; padding: .5em;">
+            <h3 style="flex: auto; flex-basis: 0; padding: 0.5em">
                 <a href="https://www.linkedin.com/in/grant-gurvis " class="underline">LinkedIn</a>
             </h3>
 
-            <h3 style="flex: auto; flex-basis: 0; padding: .5em;">
+            <h3 style="flex: auto; flex-basis: 0; padding: 0.5em">
                 <a href="https://github.com/grant0417/Resume/raw/master/grant_resume.pdf " class="underline">Resume</a>
             </h3>
-
-            <h3 style="flex: auto; flex-basis: 0; padding: .5em;">
-                <a href="mailto:ggurvis@usf.edu " class="underline">Email</a>
+            <h3 style="flex: auto; flex-basis: 0; padding: 0.5em">
+                <a href="mailto:grant@ggurvis.com" class="underline">Email</a>
             </h3>
         </div>
-        <br>
+        <br />
     </div>
 </section>
 
