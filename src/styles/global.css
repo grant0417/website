@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  hr {
+    @apply bg-gray-900 text-white;
+    border: none;
+    border-top: 0.4em double;
+    overflow: visible;
+    text-align: center;
+    height: 0px;
+  }
+
+  hr:after {
+    @apply bg-gray-900 text-white font-mono italic;
+    content: "#!";
+    font-size: 1.5em;
+    padding: 0 4px;
+    position: relative;
+    top: -0.9em;
+  }
+}

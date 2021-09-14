@@ -1,2 +1,3 @@
-public/
-wip/
+node_modules/
+.cache/
+public
