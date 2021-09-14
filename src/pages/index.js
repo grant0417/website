@@ -93,7 +93,7 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage src="../images/cornell.jpg" placeholder="blurred" />
+              <StaticImage src="../images/cornell.png" placeholder="blurred" />
             }
           />
 
@@ -115,7 +115,7 @@ const IndexPage = () => {
                 icon: <GithubIcon />,
               },
             ]}
-            img={<StaticImage src="../images/6502.jpg" placeholder="blurred" />}
+            img={<StaticImage src="../images/6502.png" placeholder="blurred" />}
           />
         </section>
 
