@@ -58,23 +58,6 @@ const IndexPage = () => {
           </h2>
 
           <Project
-            title="Chess AI"
-            description="A Chess AI
-          that is still quite early in development, it can currently generate
-          millions of moves per second to analyze."
-            links={[
-              {
-                text: "Github",
-                url: "https://github.com/grant0417/chess-ai",
-                icon: <GithubIcon />,
-              },
-            ]}
-            img={
-              <StaticImage src="../images/chess.png" placeholder="blurred" />
-            }
-          />
-
-          <Project
             title="Ray Tracer"
             description="A path
           tracer that supports parallel execution, .obj loading, BVH
@@ -94,6 +77,23 @@ const IndexPage = () => {
             ]}
             img={
               <StaticImage src="../images/cornell.png" placeholder="blurred" />
+            }
+          />
+
+          <Project
+            title="Chess AI"
+            description="A Chess AI
+          that is still quite early in development, it can currently generate
+          millions of moves per second to analyze."
+            links={[
+              {
+                text: "Github",
+                url: "https://github.com/grant0417/chess-ai",
+                icon: <GithubIcon />,
+              },
+            ]}
+            img={
+              <StaticImage src="../images/chess.png" placeholder="blurred" />
             }
           />
 
