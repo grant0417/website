@@ -36,29 +36,6 @@ const Project = ({ title, description, links, img }) => {
   );
 };
 
-const MinorProject = ({ title, description, links }) => {
-  return (
-    <div className="flex flex-col gap-1">
-      <h3 className="text-2xl text-white tracking-wider">{title}</h3>
-      {links && (
-        <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
-          {links.map((link, index) => (
-            <a
-              key={index}
-              className="flex flex-row gap-1 items-center text-blue-400 hover:text-blue-300"
-              href={link.url}
-            >
-              <span className="h-5 w-5 inline-block">{link.icon}</span>
-              <span className="text-lg leading-none">{link.text}</span>
-            </a>
-          ))}
-        </div>
-      )}
-      <p className="text-white">{description}</p>
-    </div>
-  );
-};
-
 const IndexPage = () => {
   return (
     <main className="bg-gray-900 min-h-screen">
@@ -165,7 +142,7 @@ const IndexPage = () => {
           />
 
           <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
-            <MinorProject
+            <Project
               title="IREC Rocket Payload"
               description="Led a team in desiging a payload for a sounding rocket
               to got to 30,000' in the IREC competition. Never fully relized due
@@ -178,7 +155,8 @@ const IndexPage = () => {
                 },
               ]}
             />
-                        <MinorProject
+            
+            <Project
               title="Crypto Algorithms"
               description="Several cryptographic algorithms implemented in Rust to
               learn more about cryptography. Includes AES, RSA, DH, Mersenne Twister, etc."
@@ -190,7 +168,8 @@ const IndexPage = () => {
                 },
               ]}
             />
-                        <MinorProject
+
+            <Project
               title="Neural Net"
               description="A neural network built from scratch in Rust that can
               classify the MNIST dataset. The network can be trained to classify
