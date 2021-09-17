@@ -1,14 +1,15 @@
-import * as React from "react";
-import { Helmet } from "react-helmet";
+import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import {
   GithubIcon,
   LinkedInIcon,
   EmailIcon,
   ResumeIcon,
   PlayIcon,
-} from "../components/icons";
-import "../styles/global.css";
-import { StaticImage } from "gatsby-plugin-image";
+  SiteIcon,
+} from '../components/icons';
+import '../styles/global.css';
+import { StaticImage } from 'gatsby-plugin-image';
 
 const Project = ({ title, description, links, img }) => {
   return (
@@ -23,7 +24,7 @@ const Project = ({ title, description, links, img }) => {
               href={link.url}
             >
               <span className="h-5 w-5 inline-block">{link.icon}</span>
-              <span className="font-mono text-lg leading-none">{link.text}</span>
+              <span className="text-lg leading-none">{link.text}</span>
             </a>
           ))}
         </div>
@@ -35,12 +36,35 @@ const Project = ({ title, description, links, img }) => {
   );
 };
 
+const MinorProject = ({ title, description, links }) => {
+  return (
+    <div className="flex flex-col gap-1">
+      <h3 className="text-2xl text-white tracking-wider">{title}</h3>
+      {links && (
+        <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
+          {links.map((link, index) => (
+            <a
+              key={index}
+              className="flex flex-row gap-1 items-center text-blue-400 hover:text-blue-300"
+              href={link.url}
+            >
+              <span className="h-5 w-5 inline-block">{link.icon}</span>
+              <span className="text-lg leading-none">{link.text}</span>
+            </a>
+          ))}
+        </div>
+      )}
+      <p className="text-white">{description}</p>
+    </div>
+  );
+};
+
 const IndexPage = () => {
   return (
     <main className="bg-gray-900 min-h-screen">
       <Helmet title="Grant Gurvis" />
 
-      <div className="flex flex-col gap-4 max-w-2xl px-2 mx-auto">
+      <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto">
         <div className="flex flex-col items-center px-4 py-8 gap-4">
           <h1 className="text-white text-5xl font-bold">Grant Gurvis</h1>
 
@@ -65,18 +89,40 @@ const IndexPage = () => {
           types for output as well as a WASM based site."
             links={[
               {
-                text: "Github",
-                url: "https://github.com/grant0417/ray_tracer",
+                text: 'Github',
+                url: 'https://github.com/grant0417/ray_tracer',
                 icon: <GithubIcon />,
               },
               {
-                text: "Demo",
-                url: "https://rust-ray-tracer.netlify.app/",
+                text: 'Demo',
+                url: 'https://rust-ray-tracer.netlify.app/',
                 icon: <PlayIcon />,
               },
             ]}
             img={
               <StaticImage src="../images/cornell.png" placeholder="blurred" />
+            }
+          />
+
+          <Project
+            title="Bullit"
+            description="A Reddit/Hacker News like site that supports permissioned
+            users, posts, comments, votes, and more. Built using React, NodeJs,
+            Typescript, and PostgreSQL."
+            links={[
+              {
+                text: 'Github',
+                url: 'https://github.com/grant0417/bullit',
+                icon: <GithubIcon />,
+              },
+              {
+                text: 'Bullit',
+                url: 'https://bullit.org',
+                icon: <SiteIcon />,
+              },
+            ]}
+            img={
+              <StaticImage src="../images/bullit.png" placeholder="blurred" />
             }
           />
 
@@ -87,8 +133,8 @@ const IndexPage = () => {
           millions of moves per second to analyze."
             links={[
               {
-                text: "Github",
-                url: "https://github.com/grant0417/chess-ai",
+                text: 'Github',
+                url: 'https://github.com/grant0417/chess-ai',
                 icon: <GithubIcon />,
               },
             ]}
@@ -105,44 +151,85 @@ const IndexPage = () => {
             is easily extended via memory maps."
             links={[
               {
-                text: "Assembler GitHub",
-                url: "https://github.com/grant0417/assembler6502",
+                text: 'Assembler GitHub',
+                url: 'https://github.com/grant0417/assembler6502',
                 icon: <GithubIcon />,
               },
               {
-                text: "Emulator GitHub",
-                url: "https://github.com/grant0417/emu6502",
+                text: 'Emulator GitHub',
+                url: 'https://github.com/grant0417/emu6502',
                 icon: <GithubIcon />,
               },
             ]}
             img={<StaticImage src="../images/6502.png" placeholder="blurred" />}
           />
+
+          <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
+            <MinorProject
+              title="IREC Rocket Payload"
+              description="Led a team in desiging a payload for a sounding rocket
+              to got to 30,000' in the IREC competition. Never fully relized due
+              to the competition being canceled in 2020."
+              links={[
+                {
+                  text: 'Github',
+                  url: 'https://github.com/usfsoar/irec-avionics-payload-pcb',
+                  icon: <GithubIcon />,
+                },
+              ]}
+            />
+                        <MinorProject
+              title="Crypto Algorithms"
+              description="Several cryptographic algorithms implemented in Rust to
+              learn more about cryptography. Includes AES, RSA, DH, Mersenne Twister, etc."
+              links={[
+                {
+                  text: 'Github',
+                  url: 'https://github.com/grant0417/crypto',
+                  icon: <GithubIcon />,
+                },
+              ]}
+            />
+                        <MinorProject
+              title="Neural Net"
+              description="A neural network built from scratch in Rust that can
+              classify the MNIST dataset. The network can be trained to classify
+              handwritten digits and can be used to classify images with 98% accuracy."
+              links={[
+                {
+                  text: 'Github',
+                  url: 'https://github.com/grant0417/neural_net',
+                  icon: <GithubIcon />,
+                },
+              ]}
+            />
+          </div>
         </section>
 
         <hr id="links" />
 
-        <h1 className="text-white text-3xl font-bold">{"Links & Contact"}</h1>
+        <h1 className="text-white text-3xl font-bold">{'Links & Contact'}</h1>
 
         <div className="flex flex-row flex-wrap justify-around gap-4 px-4 pb-12">
           {[
             {
-              text: "GitHub",
-              url: "https://github.com/grant0417",
+              text: 'GitHub',
+              url: 'https://github.com/grant0417',
               logo: <GithubIcon />,
             },
             {
-              text: "LinkedIn",
-              url: "https://www.linkedin.com/in/grant-gurvis/",
+              text: 'LinkedIn',
+              url: 'https://www.linkedin.com/in/grant-gurvis/',
               logo: <LinkedInIcon />,
             },
             {
-              text: "Email",
-              url: "mailto:grant@ggurvis.com",
+              text: 'Email',
+              url: 'mailto:grant@ggurvis.com',
               logo: <EmailIcon />,
             },
             {
-              text: "Resume",
-              url: "https://github.com/grant0417/Resume/raw/master/grant_resume.pdf",
+              text: 'Resume',
+              url: 'https://github.com/grant0417/Resume/raw/master/grant_resume.pdf',
               logo: <ResumeIcon />,
             },
           ].map((link, index) => (
