@@ -20,11 +20,11 @@ const Project = ({ title, description, links, img }) => {
           {links.map((link, index) => (
             <a
               key={index}
-              className="flex flex-row gap-1 items-center text-blue-400 hover:text-blue-300"
+              className="flex flex-row gap-1 items-center text-blue-300 hover:text-blue-200"
               href={link.url}
             >
               <span className="h-5 w-5 inline-block">{link.icon}</span>
-              <span className="text-lg leading-none">{link.text}</span>
+              <span className="text-lg">{link.text}</span>
             </a>
           ))}
         </div>
@@ -39,7 +39,12 @@ const Project = ({ title, description, links, img }) => {
 const IndexPage = () => {
   return (
     <main className="bg-gray-900 min-h-screen">
-      <Helmet title="Grant Gurvis" />
+      <Helmet>
+        <title lang="en">Grant Gurvis</title>
+        <meta charSet="utf-8" />
+        <meta name="description" content="Grant Gurvis" lang="en" />
+        <html lang="en" />
+      </Helmet>
 
       <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto">
         <div className="flex flex-col items-center px-4 py-8 gap-4">
@@ -77,7 +82,7 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage src="../images/cornell.png" placeholder="blurred" />
+              <StaticImage src="../images/cornell.png" placeholder="blurred" alt="Ray Tracer Image" />
             }
           />
 
@@ -99,7 +104,7 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage src="../images/bullit.png" placeholder="blurred" />
+              <StaticImage src="../images/bullit.png" placeholder="blurred" alt="Bullit Image" />
             }
           />
 
@@ -116,7 +121,7 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage src="../images/chess.png" placeholder="blurred" />
+              <StaticImage src="../images/chess.png" placeholder="blurred" alt="Chess AI Image" />
             }
           />
 
@@ -138,7 +143,7 @@ const IndexPage = () => {
                 icon: <GithubIcon />,
               },
             ]}
-            img={<StaticImage src="../images/6502.png" placeholder="blurred" />}
+            img={<StaticImage src="../images/6502.png" placeholder="blurred" alt="6502 Image" />}
           />
 
           <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
@@ -155,7 +160,7 @@ const IndexPage = () => {
                 },
               ]}
             />
-            
+
             <Project
               title="Crypto Algorithms"
               description="Several cryptographic algorithms implemented in Rust to
@@ -214,13 +219,11 @@ const IndexPage = () => {
           ].map((link, index) => (
             <a
               key={index}
-              className="text-white text-lg underline flex flex-row items-center gap-1"
+              className="text-blue-300 hover:text-blue-200 text-lg underline flex flex-row items-center gap-1"
               href={link.url}
             >
               {link.logo && (
-                <span className="h-5 w-5 inline-block text-white">
-                  {link.logo}
-                </span>
+                <span className="h-5 w-5 inline-block">{link.logo}</span>
               )}
               {link.text}
             </a>
