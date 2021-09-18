@@ -10,11 +10,17 @@ import {
 } from '../components/icons';
 import '../styles/global.css';
 import { StaticImage } from 'gatsby-plugin-image';
+import { RustPill, TypescriptPill, WasmPill, ReactPill, PostgresPill, KicadPill } from '../components/pill';
 
-const Project = ({ title, description, links, img }) => {
+const Project = ({ title, description, links, img, pills = [] }) => {
   return (
     <div className="flex flex-col gap-1">
-      <h3 className="text-2xl text-white tracking-wider">{title}</h3>
+      <div className="flex flex-row flex-wrap gap-2 items-center">
+        <h3 className="text-2xl text-white tracking-wider">{title}</h3>
+        {pills.map((pill, i) => (
+          <div key={i}>{pill}</div>
+        ))}
+      </div>
       {links && (
         <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
           {links.map((link, index) => (
@@ -82,8 +88,16 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage src="../images/cornell.png" placeholder="blurred" alt="Ray Tracer Image" />
+              <StaticImage
+                src="../images/cornell.png"
+                placeholder="blurred"
+                alt="Ray Tracer Image"
+              />
             }
+            pills={[
+              <RustPill />,
+              <WasmPill />,
+            ]}
           />
 
           <Project
@@ -104,8 +118,17 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage src="../images/bullit.png" placeholder="blurred" alt="Bullit Image" />
+              <StaticImage
+                src="../images/bullit.png"
+                placeholder="blurred"
+                alt="Bullit Image"
+              />
             }
+            pills={[
+              <TypescriptPill />,
+              <ReactPill />,
+              <PostgresPill />,
+            ]}
           />
 
           <Project
@@ -121,8 +144,15 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage src="../images/chess.png" placeholder="blurred" alt="Chess AI Image" />
+              <StaticImage
+                src="../images/chess.png"
+                placeholder="blurred"
+                alt="Chess AI Image"
+              />
             }
+            pills={[
+              <RustPill />,
+            ]}
           />
 
           <Project
@@ -143,12 +173,21 @@ const IndexPage = () => {
                 icon: <GithubIcon />,
               },
             ]}
-            img={<StaticImage src="../images/6502.png" placeholder="blurred" alt="6502 Image" />}
+            img={
+              <StaticImage
+                src="../images/6502.png"
+                placeholder="blurred"
+                alt="6502 Image"
+              />
+            }
+            pills={[
+              <RustPill />,
+            ]}
           />
 
           <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
             <Project
-              title="IREC Rocket Payload"
+              title="Rocket Payload"
               description="Led a team in desiging a payload for a sounding rocket
               to got to 30,000' in the IREC competition. Never fully relized due
               to the competition being canceled in 2020."
@@ -158,6 +197,9 @@ const IndexPage = () => {
                   url: 'https://github.com/usfsoar/irec-avionics-payload-pcb',
                   icon: <GithubIcon />,
                 },
+              ]}
+              pills={[
+                <KicadPill />
               ]}
             />
 
@@ -171,6 +213,9 @@ const IndexPage = () => {
                   url: 'https://github.com/grant0417/crypto',
                   icon: <GithubIcon />,
                 },
+              ]}
+              pills={[
+                <RustPill />,
               ]}
             />
 
@@ -186,6 +231,9 @@ const IndexPage = () => {
                   icon: <GithubIcon />,
                 },
               ]}
+              pills={[
+                <RustPill />,
+              ]}
             />
           </div>
         </section>
@@ -194,7 +242,7 @@ const IndexPage = () => {
 
         <h1 className="text-white text-3xl font-bold">{'Links & Contact'}</h1>
 
-        <div className="flex flex-row flex-wrap justify-around gap-4 px-4 pb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-12">
           {[
             {
               text: 'GitHub',
