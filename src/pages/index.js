@@ -184,7 +184,7 @@ const IndexPage = () => {
           <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
             <Project
               title="Term"
-              description="A termainal built with a Rust backend and a React frontend
+              description="A terminal built with a Rust backend and a React frontend
               using Tauri. Supports UTF8, 256 colors, resizing, amoung other 
               terminal features."
               links={[
