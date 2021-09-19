@@ -185,7 +185,7 @@ const IndexPage = () => {
             <Project
               title="Term"
               description="A terminal built with a Rust backend and a React frontend
-              using Tauri. Supports UTF8, 256 colors, resizing, amoung other 
+              using Tauri. Supports UTF8, 256 colors, resizing, among other 
               terminal features."
               links={[
                 {
