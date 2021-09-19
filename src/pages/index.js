@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Helmet } from 'react-helmet';
+import * as React from "react";
+import { Helmet } from "react-helmet";
 import {
   GithubIcon,
   LinkedInIcon,
@@ -7,10 +7,17 @@ import {
   ResumeIcon,
   PlayIcon,
   SiteIcon,
-} from '../components/icons';
-import '../styles/global.css';
-import { StaticImage } from 'gatsby-plugin-image';
-import { RustPill, TypescriptPill, WasmPill, ReactPill, PostgresPill, KicadPill } from '../components/pill';
+} from "../components/icons";
+import "../styles/global.css";
+import { StaticImage } from "gatsby-plugin-image";
+import {
+  RustPill,
+  TypescriptPill,
+  WasmPill,
+  ReactPill,
+  PostgresPill,
+  KicadPill,
+} from "../components/pill";
 
 const Project = ({ title, description, links, img, pills = [] }) => {
   return (
@@ -77,13 +84,13 @@ const IndexPage = () => {
           types for output as well as a WASM based site."
             links={[
               {
-                text: 'Github',
-                url: 'https://github.com/grant0417/ray_tracer',
+                text: "Github",
+                url: "https://github.com/grant0417/ray_tracer",
                 icon: <GithubIcon />,
               },
               {
-                text: 'Demo',
-                url: 'https://rust-ray-tracer.netlify.app/',
+                text: "Demo",
+                url: "https://rust-ray-tracer.netlify.app/",
                 icon: <PlayIcon />,
               },
             ]}
@@ -94,10 +101,7 @@ const IndexPage = () => {
                 alt="Ray Tracer Image"
               />
             }
-            pills={[
-              <RustPill />,
-              <WasmPill />,
-            ]}
+            pills={[<RustPill />, <WasmPill />]}
           />
 
           <Project
@@ -107,13 +111,13 @@ const IndexPage = () => {
             Typescript, and PostgreSQL."
             links={[
               {
-                text: 'Github',
-                url: 'https://github.com/grant0417/bullit',
+                text: "Github",
+                url: "https://github.com/grant0417/bullit",
                 icon: <GithubIcon />,
               },
               {
-                text: 'Bullit',
-                url: 'https://bullit.org',
+                text: "Bullit",
+                url: "https://bullit.org",
                 icon: <SiteIcon />,
               },
             ]}
@@ -124,11 +128,7 @@ const IndexPage = () => {
                 alt="Bullit Image"
               />
             }
-            pills={[
-              <TypescriptPill />,
-              <ReactPill />,
-              <PostgresPill />,
-            ]}
+            pills={[<TypescriptPill />, <ReactPill />, <PostgresPill />]}
           />
 
           <Project
@@ -138,8 +138,8 @@ const IndexPage = () => {
           millions of moves per second to analyze."
             links={[
               {
-                text: 'Github',
-                url: 'https://github.com/grant0417/chess-ai',
+                text: "Github",
+                url: "https://github.com/grant0417/chess-ai",
                 icon: <GithubIcon />,
               },
             ]}
@@ -150,9 +150,7 @@ const IndexPage = () => {
                 alt="Chess AI Image"
               />
             }
-            pills={[
-              <RustPill />,
-            ]}
+            pills={[<RustPill />]}
           />
 
           <Project
@@ -163,13 +161,13 @@ const IndexPage = () => {
             is easily extended via memory maps."
             links={[
               {
-                text: 'Assembler GitHub',
-                url: 'https://github.com/grant0417/assembler6502',
+                text: "Assembler GitHub",
+                url: "https://github.com/grant0417/assembler6502",
                 icon: <GithubIcon />,
               },
               {
-                text: 'Emulator GitHub',
-                url: 'https://github.com/grant0417/emu6502',
+                text: "Emulator GitHub",
+                url: "https://github.com/grant0417/emu6502",
                 icon: <GithubIcon />,
               },
             ]}
@@ -180,12 +178,25 @@ const IndexPage = () => {
                 alt="6502 Image"
               />
             }
-            pills={[
-              <RustPill />,
-            ]}
+            pills={[<RustPill />]}
           />
 
           <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
+            <Project
+              title="Term"
+              description="A termainal built with a Rust backend and a React frontend
+              using Tauri. Supports UTF8, 256 colors, resizing, amoung other 
+              terminal features."
+              links={[
+                {
+                  text: "Github",
+                  url: "https://github.com/grant0417/term",
+                  icon: <GithubIcon />,
+                },
+              ]}
+              pills={[<RustPill />, <ReactPill />]}
+            />
+
             <Project
               title="Rocket Payload"
               description="Led a team in desiging a payload for a sounding rocket
@@ -193,14 +204,12 @@ const IndexPage = () => {
               to the competition being canceled in 2020."
               links={[
                 {
-                  text: 'Github',
-                  url: 'https://github.com/usfsoar/irec-avionics-payload-pcb',
+                  text: "Github",
+                  url: "https://github.com/usfsoar/irec-avionics-payload-pcb",
                   icon: <GithubIcon />,
                 },
               ]}
-              pills={[
-                <KicadPill />
-              ]}
+              pills={[<KicadPill />]}
             />
 
             <Project
@@ -209,14 +218,12 @@ const IndexPage = () => {
               learn more about cryptography. Includes AES, RSA, DH, Mersenne Twister, etc."
               links={[
                 {
-                  text: 'Github',
-                  url: 'https://github.com/grant0417/crypto',
+                  text: "Github",
+                  url: "https://github.com/grant0417/crypto",
                   icon: <GithubIcon />,
                 },
               ]}
-              pills={[
-                <RustPill />,
-              ]}
+              pills={[<RustPill />]}
             />
 
             <Project
@@ -226,42 +233,40 @@ const IndexPage = () => {
               handwritten digits and can be used to classify images with 98% accuracy."
               links={[
                 {
-                  text: 'Github',
-                  url: 'https://github.com/grant0417/neural_net',
+                  text: "Github",
+                  url: "https://github.com/grant0417/neural_net",
                   icon: <GithubIcon />,
                 },
               ]}
-              pills={[
-                <RustPill />,
-              ]}
+              pills={[<RustPill />]}
             />
           </div>
         </section>
 
         <hr id="links" />
 
-        <h1 className="text-white text-3xl font-bold">{'Links & Contact'}</h1>
+        <h1 className="text-white text-3xl font-bold">{"Links & Contact"}</h1>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-12">
           {[
             {
-              text: 'GitHub',
-              url: 'https://github.com/grant0417',
+              text: "GitHub",
+              url: "https://github.com/grant0417",
               logo: <GithubIcon />,
             },
             {
-              text: 'LinkedIn',
-              url: 'https://www.linkedin.com/in/grant-gurvis/',
+              text: "LinkedIn",
+              url: "https://www.linkedin.com/in/grant-gurvis/",
               logo: <LinkedInIcon />,
             },
             {
-              text: 'Email',
-              url: 'mailto:grant@ggurvis.com',
+              text: "Email",
+              url: "mailto:grant@ggurvis.com",
               logo: <EmailIcon />,
             },
             {
-              text: 'Resume',
-              url: 'https://github.com/grant0417/Resume/raw/master/grant_resume.pdf',
+              text: "Resume",
+              url: "https://github.com/grant0417/Resume/raw/master/grant_resume.pdf",
               logo: <ResumeIcon />,
             },
           ].map((link, index) => (
