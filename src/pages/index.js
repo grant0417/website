@@ -199,8 +199,8 @@ const IndexPage = () => {
 
             <Project
               title="Rocket Payload"
-              description="Led a team in desiging a payload for a sounding rocket
-              to got to 30,000' in the IREC competition. Never fully relized due
+              description="Led a team in designing a payload for a sounding rocket
+              to got to 30,000' in the IREC competition. Never fully realized due
               to the competition being canceled in 2020."
               links={[
                 {
