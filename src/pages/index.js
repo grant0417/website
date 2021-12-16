@@ -102,7 +102,7 @@ const IndexPage = () => {
           ].map((link, index) => (
             <a
               key={index}
-              className="hover:text-blue-200 text-lg flex flex-row items-baseline align-middle gap-1"
+              className="text-white hover:text-blue-200 text-lg flex flex-row items-baseline align-middle gap-1"
               href={link.url}
             >
               {link.logo && (
