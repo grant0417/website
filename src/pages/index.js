@@ -60,20 +60,63 @@ const IndexPage = () => {
       </Helmet>
 
       <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto">
-        <div className="flex flex-col items-center px-4 py-8 gap-4">
+        <div className="flex flex-col items-center px-4 pt-8 pb-4 gap-4">
           <h1 className="text-white text-5xl font-bold">Grant Gurvis</h1>
 
           <p className="text-white text-xl font-light text-center max-w-xl">
-            A Computer Science student at the University of South Florida
-            interested in Computer Science, Electronics, and Math.
+            Intrested in Rust 🦀 and more. Working at{" "}
+            <a href="https://fig.io" className="underline">
+              ◧ Fig
+            </a>
+            .
           </p>
         </div>
 
-        <hr />
+        <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-1">
+          {[
+            {
+              text: "GitHub",
+              url: "https://github.com/grant0417",
+              logo: "🧑🏻‍💻",
+            },
+            {
+              text: "Twitter",
+              url: "https://twitter.com/gurgrant",
+              logo: "🐦",
+            },
+            {
+              text: "LinkedIn",
+              url: "https://www.linkedin.com/in/grant-gurvis/",
+              logo: "💼",
+            },
+            {
+              text: "Email",
+              url: "mailto:grant@gurvis.com",
+              logo: "✉️",
+            },
+            // {
+            //   text: "Resume",
+            //   url: "https://github.com/grant0417/Resume/raw/master/grant_resume.pdf",
+            //   logo: <ResumeIcon />,
+            // },
+          ].map((link, index) => (
+            <a
+              key={index}
+              className="hover:text-blue-200 text-lg flex flex-row items-baseline align-middle gap-1"
+              href={link.url}
+            >
+              {link.logo && (
+                <span className="h-5 w-5 inline-block">{link.logo}</span>
+              )}
+              {link.text}
+            </a>
+          ))}
+        </div>
 
+        <hr />
         <section id="programming-projects" className="flex flex-col gap-4 pb-4">
           <h2 className="text-white text-3xl font-bold">
-            Programming Projects
+            Personal Projects
           </h2>
 
           <Project
@@ -104,7 +147,7 @@ const IndexPage = () => {
             pills={[<RustPill />, <WasmPill />]}
           />
 
-          <Project
+          {/* <Project
             title="Bullit"
             description="A Reddit/Hacker News like site that supports permissioned
             users, posts, comments, votes, and more. Built using React, NodeJs,
@@ -129,7 +172,7 @@ const IndexPage = () => {
               />
             }
             pills={[<TypescriptPill />, <ReactPill />, <PostgresPill />]}
-          />
+          /> */}
 
           <Project
             title="Chess AI"
@@ -181,7 +224,7 @@ const IndexPage = () => {
             pills={[<RustPill />]}
           />
 
-          <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
+          {/* <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
             <Project
               title="Term"
               description="A terminal built with a Rust backend and a React frontend
@@ -240,48 +283,8 @@ const IndexPage = () => {
               ]}
               pills={[<RustPill />]}
             />
-          </div>
+          </div> */}
         </section>
-
-        <hr id="links" />
-
-        <h1 className="text-white text-3xl font-bold">{"Links & Contact"}</h1>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-12">
-          {[
-            {
-              text: "GitHub",
-              url: "https://github.com/grant0417",
-              logo: <GithubIcon />,
-            },
-            {
-              text: "LinkedIn",
-              url: "https://www.linkedin.com/in/grant-gurvis/",
-              logo: <LinkedInIcon />,
-            },
-            {
-              text: "Email",
-              url: "mailto:grant@ggurvis.com",
-              logo: <EmailIcon />,
-            },
-            {
-              text: "Resume",
-              url: "https://github.com/grant0417/Resume/raw/master/grant_resume.pdf",
-              logo: <ResumeIcon />,
-            },
-          ].map((link, index) => (
-            <a
-              key={index}
-              className="text-blue-300 hover:text-blue-200 text-lg underline flex flex-row items-center gap-1"
-              href={link.url}
-            >
-              {link.logo && (
-                <span className="h-5 w-5 inline-block">{link.logo}</span>
-              )}
-              {link.text}
-            </a>
-          ))}
-        </div>
       </div>
     </main>
   );
