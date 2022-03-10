@@ -91,7 +91,7 @@ const IndexPage = () => {
             },
             {
               text: "Email",
-              url: "mailto:grant@gurvis.com",
+              url: "mailto:grant@gurvis.net",
               logo: "✉️",
             },
             // {
