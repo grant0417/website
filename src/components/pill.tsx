@@ -2,7 +2,7 @@ import React from 'react';
 
 export function Pill({ name }) {
   return (
-    <div className="bg-white text-gray-900 rounded-full px-1.5 text-sm font-bold whitespace-nowrap tracking-tight">
+    <div className="bg-slate-50 text-slate-900 rounded-full px-2 text-sm font-bold whitespace-nowrap tracking-tight">
       {name}
     </div>
   );

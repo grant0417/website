@@ -6,7 +6,7 @@ import '../styles/global.css';
 // markup
 const NotFoundPage = () => {
   return (
-    <main className="bg-gray-900 min-h-screen flex flex-col justify-center">
+    <main className="bg-slate-900 min-h-screen flex flex-col justify-center">
       <Helmet>
         <title>404 - Page Not Found</title>
       </Helmet>

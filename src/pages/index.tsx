@@ -10,23 +10,26 @@ import {
 } from "../components/icons";
 import "../styles/global.css";
 import { StaticImage } from "gatsby-plugin-image";
-import {
-  RustPill,
-  TypescriptPill,
-  WasmPill,
-  ReactPill,
-  PostgresPill,
-  KicadPill,
-} from "../components/pill";
+import { RustPill, WasmPill } from "../components/pill";
 
-const Project = ({ title, description, links, img, pills = [] }) => {
+const Project = ({
+  title,
+  description,
+  links,
+  img,
+  pills = [],
+}: {
+  title: string;
+  description: string;
+  links: { url: string; text: string; icon: React.ReactNode }[];
+  img: React.ReactNode;
+  pills?: React.ReactElement[];
+}) => {
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex flex-row flex-wrap gap-2 items-center">
-        <h3 className="text-2xl text-white tracking-wider">{title}</h3>
-        {pills.map((pill, i) => (
-          <div key={i}>{pill}</div>
-        ))}
+      <div className="flex flex-row flex-wrap gap-2 items-baseline">
+        <h3 className="text-3xl text-white tracking-wider">{title}</h3>
+        {pills.map((pill, i) => React.cloneElement(pill, { key: i }))}
       </div>
       {links && (
         <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
@@ -51,7 +54,7 @@ const Project = ({ title, description, links, img, pills = [] }) => {
 
 const IndexPage = () => {
   return (
-    <main className="bg-gray-900 min-h-screen">
+    <main className="bg-slate-900 min-h-screen">
       <Helmet>
         <title lang="en">Grant Gurvis</title>
         <meta charSet="utf-8" />
@@ -59,7 +62,7 @@ const IndexPage = () => {
         <html lang="en" />
       </Helmet>
 
-      <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto">
+      <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto m-10">
         <div className="flex flex-col items-center px-4 pt-8 pb-4 gap-4">
           <h1 className="text-white text-5xl font-bold">Grant Gurvis</h1>
 
@@ -72,7 +75,7 @@ const IndexPage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-4">
           {[
             {
               text: "GitHub",
@@ -114,11 +117,11 @@ const IndexPage = () => {
         </div>
 
         <hr />
-        <section id="programming-projects" className="flex flex-col gap-4 pb-4">
-          <h2 className="text-white text-3xl font-bold">
-            Personal Projects
-          </h2>
 
+        <section
+          id="programming-projects"
+          className="flex flex-col space-y-8 pb-4 pt-5"
+        >
           <Project
             title="Ray Tracer"
             description="A path

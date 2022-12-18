@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Link, graphql } from 'gatsby';
+import * as React from "react";
+import { Link, graphql } from "gatsby";
 
 export default function Index({ data }) {
   const { edges: posts } = data.allMarkdownRemark;
   console.log(posts);
   return (
-    <main className="bg-gray-900 min-h-screen flex flex-col justify-center">
+    <main className="bg-slate-900 min-h-screen flex flex-col justify-center">
       {/* {posts
         .map(({ node: post }) => {
           return (
@@ -19,11 +19,8 @@ export default function Index({ data }) {
           );
         })} */}
       <div className="flex flex-col text-center gap-2">
-        <h1 className="text-5xl font-bold text-white">ComGrant Gurvis
-
-A Computer Science student at the University of South Florida interested in Computer Science, Electronics, and Math.ing soon...</h1>
         <Link to="/" className="text-2xl text-white underline">
-          {'< Go back to the homepage'}
+          {"< Go back to the homepage"}
         </Link>
       </div>
     </main>
