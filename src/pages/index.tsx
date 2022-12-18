@@ -1,13 +1,5 @@
 import * as React from "react";
-import { Helmet } from "react-helmet";
-import {
-  GithubIcon,
-  LinkedInIcon,
-  EmailIcon,
-  ResumeIcon,
-  PlayIcon,
-  SiteIcon,
-} from "../components/icons";
+import { GithubIcon, PlayIcon } from "../components/icons";
 import "../styles/global.css";
 import { StaticImage } from "gatsby-plugin-image";
 import { RustPill, WasmPill } from "../components/pill";
@@ -52,16 +44,18 @@ const Project = ({
   );
 };
 
+export const Head = () => (
+  <>
+    <title lang="en">Grant Gurvis</title>
+    <meta charSet="utf-8" />
+    <meta name="description" content="Grant Gurvis" lang="en" />
+    <html lang="en" />
+  </>
+);
+
 const IndexPage = () => {
   return (
     <main className="bg-slate-900 min-h-screen">
-      <Helmet>
-        <title lang="en">Grant Gurvis</title>
-        <meta charSet="utf-8" />
-        <meta name="description" content="Grant Gurvis" lang="en" />
-        <html lang="en" />
-      </Helmet>
-
       <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto m-10">
         <div className="flex flex-col items-center px-4 pt-8 pb-4 gap-4">
           <h1 className="text-white text-5xl font-bold">Grant Gurvis</h1>
