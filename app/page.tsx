@@ -19,10 +19,9 @@ export default function Home() {
 
           <p className="text-white text-xl font-light text-center max-w-xl">
             Interested in Rust 🦀 and more — Working at{" "}
-            <a href="https://fig.io" className="underline">
+            <a href="https://fig.io" className="underline underline-offset-4">
               ◧ Fig
             </a>
-            
           </p>
         </div>
 
@@ -59,9 +58,7 @@ export default function Home() {
               className="text-white hover:text-blue-200 text-lg flex flex-row items-baseline align-middle gap-1"
               href={link.url}
             >
-              {link.logo && (
-                <span className="h-5 w-5 inline-block">{link.logo}</span>
-              )}
+              {link.logo && `${link.logo} `}
               {link.text}
             </a>
           ))}

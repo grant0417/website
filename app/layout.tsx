@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Grant Gurvis',
   description: 'Grant Gurvis',
   icons: '/images/icon.png',
-  themeColor: 'black'
+  themeColor: 'black',
 }
 
 export default function RootLayout({
