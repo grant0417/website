@@ -1,71 +1,28 @@
-import * as React from "react";
-import { GithubIcon, PlayIcon } from "../components/icons";
-import "../styles/global.css";
-import { StaticImage } from "gatsby-plugin-image";
-import { RustPill, WasmPill } from "../components/pill";
+import { GithubIcon, PlayIcon } from "@/app/components/icons";
+import { RustPill, WasmPill } from "@/app/components/pill";
+import Image from "next/image";
+import cornellImg from "../public/images/cornell.png";
+import chessImg from "../public/images/chess.png";
+import sixFiveZeroTwoImg from "../public/images/6502.png";
+import { ServerRuntime } from "next";
+import Project from "./components/project";
+import Divider from "./components/divider";
 
-const Project = ({
-  title,
-  description,
-  links,
-  img,
-  pills = [],
-}: {
-  title: string;
-  description: string;
-  links: { url: string; text: string; icon: React.ReactNode }[];
-  img: React.ReactNode;
-  pills?: React.ReactElement[];
-}) => {
+export const runtime: ServerRuntime = "experimental-edge";
+
+export default function Home() {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex flex-row flex-wrap gap-2 items-baseline">
-        <h3 className="text-3xl text-white tracking-wider">{title}</h3>
-        {pills.map((pill, i) => React.cloneElement(pill, { key: i }))}
-      </div>
-      {links && (
-        <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
-          {links.map((link, index) => (
-            <a
-              key={index}
-              className="flex flex-row gap-1 items-center text-blue-300 hover:text-blue-200"
-              href={link.url}
-            >
-              <span className="h-5 w-5 inline-block">{link.icon}</span>
-              <span className="text-lg">{link.text}</span>
-            </a>
-          ))}
-        </div>
-      )}
-      {img && img}
-
-      <p className="text-white">{description}</p>
-    </div>
-  );
-};
-
-export const Head = () => (
-  <>
-    <title lang="en">Grant Gurvis</title>
-    <meta charSet="utf-8" />
-    <meta name="description" content="Grant Gurvis" lang="en" />
-    <html lang="en" />
-  </>
-);
-
-const IndexPage = () => {
-  return (
-    <main className="bg-slate-900 min-h-screen">
+    <main>
       <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto m-10">
         <div className="flex flex-col items-center px-4 pt-8 pb-4 gap-4">
           <h1 className="text-white text-5xl font-bold">Grant Gurvis</h1>
 
           <p className="text-white text-xl font-light text-center max-w-xl">
-            Interested in Rust 🦀 and more. Working at{" "}
+            Interested in Rust 🦀 and more — Working at{" "}
             <a href="https://fig.io" className="underline">
               ◧ Fig
             </a>
-            .
+            
           </p>
         </div>
 
@@ -110,7 +67,7 @@ const IndexPage = () => {
           ))}
         </div>
 
-        <hr />
+        <Divider />
 
         <section
           id="programming-projects"
@@ -135,13 +92,13 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage
-                src="../images/cornell.png"
-                placeholder="blurred"
+              <Image
+                src={cornellImg}
                 alt="Ray Tracer Image"
+                placeholder="blur"
               />
             }
-            pills={[<RustPill />, <WasmPill />]}
+            pills={[<RustPill key={0} />, <WasmPill key={1} />]}
           />
 
           {/* <Project
@@ -184,13 +141,9 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage
-                src="../images/chess.png"
-                placeholder="blurred"
-                alt="Chess AI Image"
-              />
+              <Image src={chessImg} alt="Chess AI Image" placeholder="blur" />
             }
-            pills={[<RustPill />]}
+            pills={[<RustPill key={0} />]}
           />
 
           <Project
@@ -212,13 +165,13 @@ const IndexPage = () => {
               },
             ]}
             img={
-              <StaticImage
-                src="../images/6502.png"
-                placeholder="blurred"
+              <Image
+                src={sixFiveZeroTwoImg}
                 alt="6502 Image"
+                placeholder="blur"
               />
             }
-            pills={[<RustPill />]}
+            pills={[<RustPill key={0} />]}
           />
 
           {/* <div className="grid grid-cols-none sm:grid-cols-2 gap-2">
@@ -285,6 +238,4 @@ const IndexPage = () => {
       </div>
     </main>
   );
-};
-
-export default IndexPage;
+}

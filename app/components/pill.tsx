@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-export function Pill({ name }) {
+export function Pill({ name }: { name: string }) {
   return (
     <div className="bg-slate-50 text-slate-900 rounded-full px-2 text-sm font-bold whitespace-nowrap tracking-tight">
       {name}

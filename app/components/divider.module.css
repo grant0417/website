@@ -1,0 +1,18 @@
+.divider {
+  @apply bg-slate-900 text-slate-50;
+  border: none;
+  border-top: 0.4em double;
+  overflow: visible;
+  text-align: center;
+  height: 0px;
+}
+
+.divider::after {
+  @apply bg-slate-900 text-slate-50 italic font-mono;
+  content: "#!";
+  font-size: 1.5em;
+  padding-left: 0.3em;
+  padding-right: 0.1em;
+  position: relative;
+  top: -0.9em;
+}
