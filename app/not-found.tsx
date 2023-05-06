@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next/types";
 import * as React from "react";
-import "../styles/global.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "404 - Page not found",
