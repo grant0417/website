@@ -1,4 +1,5 @@
 import React from "react";
+import { IconType } from "react-icons";
 
 const Project = ({
   title,
@@ -9,7 +10,7 @@ const Project = ({
 }: {
   title: string;
   description: string;
-  links?: { text: string; url: string; icon: React.ReactNode }[];
+  links?: { text: string; url: string; icon: React.ReactNode | IconType }[];
   img?: React.ReactNode;
   pills?: React.ReactElement[];
 }) => {
@@ -21,14 +22,19 @@ const Project = ({
       </div>
       {links && (
         <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
-          {links.map((link, index) => (
+          {links.map((link) => (
             <a
-              key={index}
-              className="flex flex-row gap-1 items-center text-blue-300 hover:text-blue-200"
+              key={link.url}
               href={link.url}
+              className="flex flex-row gap-1 items-center text-blue-300 hover:text-blue-200"
             >
-              <span className="h-5 w-5 inline-block">{link.icon}</span>
-              <span className="text-lg">{link.text}</span>
+              {typeof link.icon === "function" ? (
+                <link.icon className="h-4 w-4 inline-block" />
+              ) : (
+                <span className="h-4 w-4 inline-block">{link.icon}</span>
+              )}
+
+              <span>{link.text}</span>
             </a>
           ))}
         </div>

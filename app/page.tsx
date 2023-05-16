@@ -1,12 +1,14 @@
-import { GithubIcon, PlayIcon } from "@/app/components/icons";
 import { RustPill, WasmPill } from "@/app/components/pill";
 import Image from "next/image";
+import cicadaImg from "../public/images/cicada.jpg";
 import cornellImg from "../public/images/cornell.png";
 import chessImg from "../public/images/chess.png";
 import sixFiveZeroTwoImg from "../public/images/6502.png";
 import { ServerRuntime } from "next";
 import Project from "./components/project";
 import Divider from "./components/divider";
+import { BiGlobe, BiPlay } from "react-icons/bi";
+import { SiGithub } from "react-icons/si";
 
 export const runtime: ServerRuntime = "experimental-edge";
 
@@ -66,10 +68,59 @@ export default function Home() {
 
         <Divider />
 
-        <section
-          id="programming-projects"
-          className="flex flex-col space-y-8 pb-4 pt-5"
-        >
+        <section id="projects" className="flex flex-col space-y-8 pb-4 pt-5">
+          <Project
+            title="Cicada"
+            description="A path
+          tracer that supports parallel execution, .obj loading, BVH
+          acceleration with a command line interface that will support most file
+          types for output as well as a WASM based site."
+            links={[
+              {
+                text: "Site",
+                url: "https://cicada.build",
+                icon: BiGlobe,
+              },
+              {
+                text: "Github",
+                url: "https://github.com/cicadahq/cicada",
+                icon: SiGithub,
+              },
+            ]}
+            img={
+              <Image src={cicadaImg} alt="Cicada Image" placeholder="blur" />
+            }
+            pills={[<RustPill key={0} />]}
+          />
+
+          <Project
+            title="Fig"
+            description="A path
+          tracer that supports parallel execution, .obj loading, BVH
+          acceleration with a command line interface that will support most file
+          types for output as well as a WASM based site."
+            links={[
+              {
+                text: "Github",
+                url: "https://github.com/grant0417/ray_tracer",
+                icon: SiGithub,
+              },
+              {
+                text: "Demo",
+                url: "https://rust-ray-tracer.netlify.app/",
+                icon: BiPlay,
+              },
+            ]}
+            img={
+              <Image
+                src={cornellImg}
+                alt="Ray Tracer Image"
+                placeholder="blur"
+              />
+            }
+            pills={[<RustPill key={0} />, <WasmPill key={1} />]}
+          />
+
           <Project
             title="Ray Tracer"
             description="A path
@@ -80,12 +131,12 @@ export default function Home() {
               {
                 text: "Github",
                 url: "https://github.com/grant0417/ray_tracer",
-                icon: <GithubIcon />,
+                icon: SiGithub,
               },
               {
                 text: "Demo",
                 url: "https://rust-ray-tracer.netlify.app/",
-                icon: <PlayIcon />,
+                icon: BiPlay,
               },
             ]}
             img={
@@ -134,7 +185,7 @@ export default function Home() {
               {
                 text: "Github",
                 url: "https://github.com/grant0417/chess-ai",
-                icon: <GithubIcon />,
+                icon: SiGithub,
               },
             ]}
             img={
@@ -153,12 +204,12 @@ export default function Home() {
               {
                 text: "Assembler GitHub",
                 url: "https://github.com/grant0417/assembler6502",
-                icon: <GithubIcon />,
+                icon: SiGithub,
               },
               {
                 text: "Emulator GitHub",
                 url: "https://github.com/grant0417/emu6502",
-                icon: <GithubIcon />,
+                icon: SiGithub,
               },
             ]}
             img={
