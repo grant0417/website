@@ -6,6 +6,9 @@ import chessImg from "../public/images/chess.png";
 import sixFiveZeroTwoImg from "../public/images/6502.png";
 import Project from "./components/project";
 import Divider from "./components/divider";
+import { ServerRuntime } from "next";
+
+export const runtime: ServerRuntime = "edge";
 
 export default function Home() {
   return (

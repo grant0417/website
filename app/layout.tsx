@@ -1,5 +1,7 @@
-import { Metadata } from 'next'
+import { Metadata, ServerRuntime } from 'next'
 import './globals.css'
+
+export const runtime: ServerRuntime = "edge";
 
 export const metadata: Metadata = {
   title: 'Grant Gurvis',
