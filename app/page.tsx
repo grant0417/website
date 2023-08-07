@@ -4,11 +4,8 @@ import Image from "next/image";
 import cornellImg from "../public/images/cornell.png";
 import chessImg from "../public/images/chess.png";
 import sixFiveZeroTwoImg from "../public/images/6502.png";
-import { ServerRuntime } from "next";
 import Project from "./components/project";
 import Divider from "./components/divider";
-
-export const runtime: ServerRuntime = "experimental-edge";
 
 export default function Home() {
   return (
