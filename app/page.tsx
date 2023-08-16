@@ -18,10 +18,11 @@ export default function Home() {
           <h1 className="text-white text-5xl font-bold">Grant Gurvis</h1>
 
           <p className="text-white text-xl font-light text-center max-w-xl">
-            Interested in Rust 🦀 and more — Working at{" "}
-            <a href="https://fig.io" className="underline underline-offset-4">
-              ◧ Fig
-            </a>
+            Interested in Rust 🦀 and more
+            {/* — Working at{" "}
+              <a href="https://fig.io" className="underline underline-offset-4">
+                ◧ Fig
+              </a> */}
           </p>
         </div>
 
