@@ -1,14 +1,14 @@
-import { GithubIcon, PlayIcon } from "@/app/components/icons";
-import { RustPill, WasmPill } from "@/app/components/pill";
-import Image from "next/image";
-import cornellImg from "../public/images/cornell.png";
-import chessImg from "../public/images/chess.png";
-import sixFiveZeroTwoImg from "../public/images/6502.png";
-import Project from "./components/project";
-import Divider from "./components/divider";
+import { GithubIcon, PlayIcon } from "@/components/icons";
+import { RustPill, WasmPill } from "@/components/pill";
+import Project from "@/components/project";
+import Divider from "@/components/divider";
+import cornellImg from "@/public/images/cornell.png";
+import chessImg from "@/public/images/chess.png";
+import sixFiveZeroTwoImg from "@/public/images/6502.png";
 import { ServerRuntime } from "next";
+import Image from "next/image";
 
-export const runtime: ServerRuntime = "edge";
+// export const runtime: ServerRuntime = "edge";
 
 export default function Home() {
   return (

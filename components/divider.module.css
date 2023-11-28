@@ -1,5 +1,5 @@
 .divider {
-  @apply bg-slate-900 text-slate-50;
+  @apply bg-zinc-950 text-zinc-50;
   border: none;
   border-top: 0.4em double;
   overflow: visible;
@@ -8,7 +8,7 @@
 }
 
 .divider::after {
-  @apply bg-slate-900 text-slate-50 italic font-mono;
+  @apply bg-zinc-950 text-zinc-50 italic font-mono;
   content: "#!";
   font-size: 1.5em;
   padding-left: 0.3em;

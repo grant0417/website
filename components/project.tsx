@@ -1,4 +1,4 @@
-import React from "react";
+import { cloneElement } from "react";
 
 const Project = ({
   title,
@@ -17,7 +17,7 @@ const Project = ({
     <div className="flex flex-col gap-1">
       <div className="flex flex-row flex-wrap gap-2 items-baseline">
         <h3 className="text-3xl text-white tracking-wider">{title}</h3>
-        {pills.map((pill, i) => React.cloneElement(pill, { key: i }))}
+        {pills.map((pill, i) => cloneElement(pill, { key: i }))}
       </div>
       {links && (
         <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
