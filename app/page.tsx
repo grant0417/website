@@ -19,10 +19,6 @@ export default function Home() {
 
           <p className="text-white text-xl font-light text-center max-w-xl">
             Interested in Rust 🦀 and more
-            {/* — Working at{" "}
-              <a href="https://fig.io" className="underline underline-offset-4">
-                ◧ Fig
-              </a> */}
           </p>
         </div>
 
@@ -48,11 +44,6 @@ export default function Home() {
               url: "mailto:grant@gurvis.net",
               logo: "✉️",
             },
-            // {
-            //   text: "Resume",
-            //   url: "https://github.com/grant0417/Resume/raw/master/grant_resume.pdf",
-            //   logo: <ResumeIcon />,
-            // },
           ].map((link, index) => (
             <a
               key={index}

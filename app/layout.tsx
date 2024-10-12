@@ -1,13 +1,17 @@
-import { Metadata, ServerRuntime } from "next";
+import { Metadata, ServerRuntime, Viewport } from "next";
 import "./globals.css";
 
 export const runtime: ServerRuntime = "edge";
+
+export const viewport: Viewport = {
+  themeColor: "black",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   title: "Grant Gurvis",
   description: "Grant Gurvis",
   icons: "/images/icon.png",
-  themeColor: "black",
   other: {
     "darkreader-lock": "true",
   },
