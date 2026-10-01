@@ -19,7 +19,7 @@ export function Cover({
 
   useEffect(() => {
     if (ref.current) drawCover(ref.current, title, look, width, height);
-  }, [title, look.style, look.palette, width, height]);
+  }, [title, look, width, height]);
 
   return (
     <canvas
