@@ -1,8 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 
+export type Day = { date: string; count: number };
+
 export type Contributions = {
   /** weeks[w][d] is GitHub's contribution level (0–4), Sunday first. */
   weeks: number[][];
+  /** The same grid with dates and counts; null where there's no data. */
+  days: (Day | null)[][];
   total: number;
   /** False when GitHub couldn't be reached and placeholder data is shown. */
   live: boolean;
@@ -39,25 +43,32 @@ function parseCalendar(html: string): Contributions {
     counts.set(m[1], m[2] === "No" ? 0 : Number(m[2].replace(/,/g, "")));
   }
 
-  const days: { date: string; level: number; count: number }[] = [];
+  const cells: { date: string; level: number; count: number }[] = [];
   for (const m of html.matchAll(/<td[^>]*data-date="([\d-]+)"[^>]*>/g)) {
     const level = Number(/data-level="(\d)"/.exec(m[0])?.[1] ?? 0);
     const id = /id="([^"]+)"/.exec(m[0])?.[1] ?? "";
-    days.push({ date: m[1], level, count: counts.get(id) ?? 0 });
+    cells.push({ date: m[1], level, count: counts.get(id) ?? 0 });
   }
-  if (days.length < 300) throw new Error("Unexpected contributions markup");
+  if (cells.length < 300) throw new Error("Unexpected contributions markup");
 
-  days.sort((a, b) => a.date.localeCompare(b.date));
-  const startDow = new Date(`${days[0].date}T00:00:00Z`).getUTCDay();
+  cells.sort((a, b) => a.date.localeCompare(b.date));
+  const startDow = new Date(`${cells[0].date}T00:00:00Z`).getUTCDay();
   const weeks: number[][] = [];
-  days.forEach((day, i) => {
+  const days: (Day | null)[][] = [];
+  cells.forEach((cell, i) => {
     const slot = i + startDow;
-    (weeks[Math.floor(slot / 7)] ??= Array(7).fill(0))[slot % 7] = day.level;
+    const w = Math.floor(slot / 7);
+    (weeks[w] ??= Array(7).fill(0))[slot % 7] = cell.level;
+    (days[w] ??= Array(7).fill(null))[slot % 7] = {
+      date: cell.date,
+      count: cell.count,
+    };
   });
 
   return {
     weeks,
-    total: days.reduce((sum, d) => sum + d.count, 0),
+    days,
+    total: cells.reduce((sum, d) => sum + d.count, 0),
     live: true,
   };
 }
@@ -76,5 +87,10 @@ function placeholderContributions(): Contributions {
       return v < 0.12 ? 0 : v < 0.3 ? 1 : v < 0.5 ? 2 : v < 0.7 ? 3 : 4;
     }),
   );
-  return { weeks, total: 0, live: false };
+  return {
+    weeks,
+    days: weeks.map((w) => w.map(() => null)),
+    total: 0,
+    live: false,
+  };
 }
