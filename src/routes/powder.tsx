@@ -1,49 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DustSim, type Tool } from "@/lib/dust";
+import { DustSim, ELEMENTS, type Tool } from "@/lib/dust";
 
 export const Route = createFileRoute("/powder")({
   component: Powder,
   head: () => ({ meta: [{ title: "Grant Gurvis · Powder" }] }),
 });
 
-const TOOLS: { tool: Tool; label: string; color: string }[] = [
-  { tool: "touch", label: "Touch", color: "#F5D67B" },
-  { tool: "powder", label: "Powder", color: "#C9B48A" },
-  { tool: "water", label: "Water", color: "#6A96FF" },
-  { tool: "fire", label: "Fire", color: "#FF6A2F" },
-  { tool: "erase", label: "Erase", color: "#DADAE0" },
-];
+const PEN_SIZES = [1, 2, 4, 8];
 
-const LINKS = [
-  { label: "Hercules ↗", href: "https://hercules.app", color: "#F5D67B" },
-  { label: "GitHub ↗", href: "https://github.com/grant0417" },
-  {
-    label: "Twitter ↗",
-    href: "https://twitter.com/gurgrant",
-    color: "#7FC8F8",
-  },
-  {
-    label: "LinkedIn ↗",
-    href: "https://www.linkedin.com/in/grant-gurvis/",
-    color: "#8FB0FF",
-  },
-  { label: "Email ↗", href: "mailto:grant@gurvis.net", color: "#FF8A5B" },
-];
-
-const control =
-  "inline-flex min-h-11 flex-[1_0_auto] cursor-pointer items-center justify-center whitespace-nowrap border border-[#33333B] bg-[#16161B] px-3 font-pixel text-[13px] text-[#DADAE0] hover:border-[#7A7A86] hover:bg-[#23232A]";
-const row = "flex gap-1 overflow-x-auto [scrollbar-width:none]";
+const cell =
+  "flex min-h-11 cursor-pointer items-center justify-center whitespace-nowrap border border-[#2E2E36] bg-[#16161B] px-2 font-pixel text-xs uppercase text-[#DADAE0] hover:border-[#7A7A86] hover:bg-[#23232A]";
 
 function Powder() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sim = useRef<DustSim | null>(null);
   const drawing = useRef(false);
-  const [tool, setTool] = useState<Tool>("touch");
+  const lastPoint = useRef<{ x: number; y: number } | null>(null);
+  const [tool, setTool] = useState<Tool>("powder");
+  const [pen, setPen] = useState(2);
   const [rain, setRain] = useState(true);
-  const [intact, setIntact] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [dots, setDots] = useState(0);
   const toolRef = useRef(tool);
   toolRef.current = tool;
+  const penRef = useRef(pen);
+  penRef.current = pen;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -66,7 +48,7 @@ function Powder() {
       raf = requestAnimationFrame(loop);
       if (document.hidden || !s.width) return;
       s.tick();
-      if (++frame % 30 === 0) setIntact(s.intact());
+      if (++frame % 30 === 0) setDots(s.dots());
     };
     loop();
     return () => {
@@ -77,14 +59,24 @@ function Powder() {
 
   const apply = (e: React.PointerEvent<HTMLCanvasElement>, hover: boolean) => {
     const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const prev = lastPoint.current ?? { x, y };
+    lastPoint.current = { x, y };
     sim.current?.touch(
-      e.clientX - rect.left,
-      e.clientY - rect.top,
+      x,
+      y,
       rect.width,
       rect.height,
       toolRef.current,
+      PEN_SIZES[penRef.current],
       hover,
+      x - prev.x,
+      y - prev.y,
     );
+  };
+  const stop = () => {
+    drawing.current = false;
   };
 
   return (
@@ -101,71 +93,88 @@ function Powder() {
             apply(e, false);
           }}
           onPointerMove={(e) => apply(e, !drawing.current)}
-          onPointerUp={() => (drawing.current = false)}
-          onPointerLeave={() => (drawing.current = false)}
-          onPointerCancel={() => (drawing.current = false)}
+          onPointerUp={stop}
+          onPointerLeave={(e) => {
+            stop();
+            lastPoint.current = null;
+            e.currentTarget.releasePointerCapture?.(e.pointerId);
+          }}
+          onPointerCancel={stop}
           className="absolute inset-0 size-full cursor-crosshair touch-none [image-rendering:pixelated]"
-          aria-label="My name and work history pour in as sand, then crumble when you touch them."
+          aria-label="Falling sand sandbox. My name and work history pour in as sand, then crumble when you touch them."
         />
       </div>
-      <div className="flex flex-col gap-1 border-t-2 border-[#33333B] bg-[#0F0F13] p-1.5">
-        <div className={row}>
-          {TOOLS.map((t) => (
-            <button
-              key={t.tool}
-              type="button"
-              onClick={() => setTool(t.tool)}
-              aria-pressed={tool === t.tool}
-              className={control}
-              style={{
-                color: t.color,
-                outline: tool === t.tool ? `2px solid ${t.color}` : "none",
-                outlineOffset: -4,
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
+      {/* Two rows that fill left to right; they scroll sideways on phones. */}
+      <div className="grid auto-cols-[minmax(84px,1fr)] grid-flow-col grid-rows-2 gap-1 overflow-x-auto border-t-2 border-[#2E2E36] bg-[#0F0F13] p-1.5 [scrollbar-width:none]">
+        {ELEMENTS.map((el) => (
           <button
+            key={el.id}
             type="button"
-            className={control}
-            aria-pressed={rain}
-            onClick={() => {
-              if (sim.current) sim.current.rain = !rain;
-              setRain(!rain);
+            onClick={() => setTool(el.id)}
+            aria-pressed={tool === el.id}
+            className={cell}
+            style={{
+              color: el.color,
+              outline: tool === el.id ? `2px solid ${el.color}` : "none",
+              outlineOffset: -4,
             }}
           >
-            {rain ? "Rain on" : "Rain off"}
+            {el.label}
           </button>
-          <button
-            type="button"
-            className={control}
-            style={{ color: "#F5D67B" }}
-            onClick={() => sim.current?.replay()}
-          >
-            ↻ Pour again
-          </button>
-        </div>
-        <nav className={row}>
-          <Link to="/" className={control}>
-            ← Home
-          </Link>
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className={control}
-              style={{ color: l.color }}
-            >
-              {l.label}
-            </a>
-          ))}
-          <span
-            className={`${control} cursor-default text-[#7A7A86] hover:border-[#33333B] hover:bg-[#16161B]`}
-          >
-            {intact}% intact
-          </span>
-        </nav>
+        ))}
+        <button
+          type="button"
+          className={cell}
+          onClick={() => setPen((pen + 1) % PEN_SIZES.length)}
+          aria-label={`Pen size ${PEN_SIZES[pen]}, change`}
+        >
+          Pen {PEN_SIZES[pen]}
+        </button>
+        <button
+          type="button"
+          className={cell}
+          aria-pressed={paused}
+          onClick={() => {
+            if (sim.current) sim.current.paused = !paused;
+            setPaused(!paused);
+          }}
+        >
+          {paused ? "Start" : "Stop"}
+        </button>
+        <button
+          type="button"
+          className={cell}
+          aria-pressed={rain}
+          onClick={() => {
+            if (sim.current) sim.current.rain = !rain;
+            setRain(!rain);
+          }}
+        >
+          Rain {rain ? "on" : "off"}
+        </button>
+        <button
+          type="button"
+          className={cell}
+          onClick={() => sim.current?.clear()}
+        >
+          Clear
+        </button>
+        <button
+          type="button"
+          className={cell}
+          style={{ color: "#F5D67B" }}
+          onClick={() => sim.current?.replay()}
+        >
+          Reset
+        </button>
+        <Link to="/" className={cell}>
+          ← Home
+        </Link>
+        <span
+          className={`${cell} cursor-default text-[#7A7A86] hover:border-[#2E2E36] hover:bg-[#16161B]`}
+        >
+          Dot {dots}
+        </span>
       </div>
     </div>
   );

@@ -119,12 +119,15 @@ function Home() {
             </span>
             <span>2025–</span>
           </a>
-          <div className="flex justify-between gap-3 border-b border-(--fg) px-1 pt-1 pb-2 text-[22px]">
+          <a
+            href="https://github.com/aws/amazon-q-developer-cli"
+            className="flex justify-between gap-3 border-b border-(--fg) px-1 pt-1 pb-2 text-[22px] hover:bg-(--fg) hover:text-(--bg)"
+          >
             <span>
               <b>AWS</b> · Engineer
             </span>
             <span>2023–25</span>
-          </div>
+          </a>
           <a
             href="https://techcrunch.com/2023/08/29/amazon-fig-command-line-terminal-generative-ai/"
             className="flex justify-between gap-3 border-b border-(--fg) px-1 pt-1 pb-2 text-[22px] hover:bg-(--fg) hover:text-(--bg)"
