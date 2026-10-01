@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getContributions } from "@/lib/contributions";
-import { busiestDay, STEP_MS, Synth, type Voice } from "@/lib/synth";
+import { busiestDay, STEP_MS, Synth } from "@/lib/synth";
 import { RidgeField, type RidgeFieldHandle } from "@/components/ridge-field";
-import { PalettePicker, usePalette } from "@/components/palette-picker";
+import { PaletteMenu, usePalette } from "@/components/palette-picker";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -11,28 +11,16 @@ export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Grant Gurvis" }] }),
 });
 
-const VOICES: { label: string; voice: Voice }[] = [
-  { label: "Bell", voice: "bell" },
-  { label: "Pluck", voice: "pluck" },
-  { label: "Soft", voice: "soft" },
-];
-
 const LEVEL_OPACITY = [0.08, 0.25, 0.45, 0.7, 1];
-
-const button =
-  "min-h-11 cursor-pointer whitespace-nowrap border-2 border-(--fg) px-[18px] font-pixel text-sm";
 
 function Home() {
   const { weeks, total } = Route.useLoaderData();
   const [palette, setPalette] = usePalette("Cobalt");
-  const [voice, setVoice] = useState<Voice>("bell");
   const [playing, setPlaying] = useState(false);
   const [week, setWeek] = useState(-1);
 
   const field = useRef<RidgeFieldHandle>(null);
   const synth = useRef<Synth | null>(null);
-  const voiceRef = useRef(voice);
-  voiceRef.current = voice;
 
   useEffect(() => {
     if (!playing) return;
@@ -40,7 +28,7 @@ function Home() {
     const id = setInterval(() => {
       w = (w + 1) % weeks.length;
       const { day, level } = busiestDay(weeks[w]);
-      synth.current?.playWeek(weeks[w], w, voiceRef.current);
+      synth.current?.playWeek(weeks[w], w, "bell");
       field.current?.note(w, day, level);
       setWeek(w);
     }, STEP_MS);
@@ -70,32 +58,23 @@ function Home() {
             Grant Gurvis
           </h1>
         </div>
-        <PalettePicker
+        <PaletteMenu
           palette={palette}
           onChange={setPalette}
-          className="absolute top-[clamp(16px,3vw,44px)] right-[clamp(16px,3vw,44px)] border-[3px] border-(--fg) bg-(--bg) p-1.5 max-sm:hidden"
+          className="absolute top-[clamp(12px,3vw,44px)] right-[clamp(12px,3vw,44px)]"
         />
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-b-[3px] border-(--fg) px-[clamp(16px,3vw,44px)] py-3.5">
+        {/* Fixed widths keep the bar from shifting as the labels change. */}
         <button
           type="button"
           onClick={toggle}
-          className={`${button} bg-(--fg) text-(--bg)`}
+          aria-label={playing ? "Pause" : "Play my year in commits"}
+          className="min-h-11 w-28 shrink-0 cursor-pointer border-2 border-(--fg) bg-(--fg) font-pixel text-sm whitespace-nowrap text-(--bg)"
         >
-          {playing ? "❚❚ Pause" : "▶ Play my year"}
+          {playing ? "Pause" : "Play"}
         </button>
-        {VOICES.map((v) => (
-          <button
-            key={v.voice}
-            type="button"
-            aria-pressed={voice === v.voice}
-            onClick={() => setVoice(v.voice)}
-            className={`${button} aria-pressed:bg-(--fg) aria-pressed:text-(--bg)`}
-          >
-            {v.label}
-          </button>
-        ))}
         <div
           className="grid min-w-0 flex-[1_1_360px] grid-flow-col grid-rows-[repeat(7,6px)] gap-0.5"
           style={{
@@ -119,15 +98,14 @@ function Home() {
             )),
           )}
         </div>
-        <span className="font-pixel text-[13px] whitespace-nowrap">
+        <span className="w-24 shrink-0 font-pixel text-[13px] whitespace-nowrap">
           wk {Math.max(0, week + 1)}/{weeks.length}
-          {total > 0 && ` · ${total.toLocaleString("en-US")} contributions`}
         </span>
-        <PalettePicker
-          palette={palette}
-          onChange={setPalette}
-          className="sm:hidden"
-        />
+        {total > 0 && (
+          <span className="font-pixel text-[13px] whitespace-nowrap">
+            {total.toLocaleString("en-US")} contributions
+          </span>
+        )}
       </div>
 
       <div className="grid flex-grow grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
