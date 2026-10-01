@@ -3,6 +3,7 @@
 @theme {
   --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-pixel: "Silkscreen", ui-monospace, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 /* Home page colors before a palette is picked: follow the system theme. */
@@ -19,4 +20,194 @@
 
 body {
   @apply bg-zinc-950 text-zinc-50;
+}
+
+/* Blog: black on white or white on black, tinted per post by its cover. */
+.blog {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: #6b6b67;
+  --rule: #e4e4e0;
+  --code-bg: #f4f4f1;
+  --ln: #b5b5b0;
+  --accent-text: var(--accent-text-l, var(--fg));
+  --inline: var(--inline-l, var(--fg));
+  --hl: var(--hl-l, #ebebe6);
+  /* Token colors read by sugar-high's inline styles. */
+  --sh-keyword: #c2410c;
+  --sh-string: #0e7c3a;
+  --sh-class: #7c3aed;
+  --sh-identifier: #111111;
+  --sh-sign: #55554f;
+  --sh-comment: #8a8a85;
+  --sh-property: #1f3bff;
+  --sh-entity: #1f3bff;
+  --sh-jsxliterals: #0f766e;
+  --sh-space: inherit;
+  background: var(--bg);
+  color: var(--fg);
+}
+@media (prefers-color-scheme: dark) {
+  .blog {
+    --bg: #000000;
+    --fg: #f2f2ee;
+    --muted: #9a9a96;
+    --rule: #2a2a28;
+    --code-bg: #111114;
+    --ln: #4a4a4e;
+    --accent-text: var(--accent-text-d, var(--fg));
+    --inline: var(--inline-d, var(--fg));
+    --hl: var(--hl-d, #1c1c1f);
+    --sh-keyword: #ff8a5b;
+    --sh-string: #9be07a;
+    --sh-class: #c6a0f6;
+    --sh-identifier: #f2f2ee;
+    --sh-sign: #a8a8a2;
+    --sh-comment: #6e6e68;
+    --sh-property: #7fa8ff;
+    --sh-entity: #7fa8ff;
+    --sh-jsxliterals: #5ee0c8;
+  }
+}
+
+.prose {
+  font-size: 19px;
+  line-height: 1.7;
+}
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote {
+  margin: 0 0 22px;
+}
+.prose ul,
+.prose ol {
+  padding-left: 22px;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose h2 {
+  margin: 48px 0 12px;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  font-stretch: 90%;
+}
+.prose h3 {
+  margin: 36px 0 10px;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: var(--accent, currentColor);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.prose blockquote {
+  padding-left: 18px;
+  border-left: 2px solid var(--rule);
+  color: var(--muted);
+}
+.prose hr {
+  margin: 40px 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+.prose code {
+  /* JetBrains Mono would otherwise draw => as ⇒ and >= as ≥. */
+  font-variant-ligatures: none;
+}
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--inline);
+  padding: 2px 5px;
+}
+.prose img {
+  max-width: 100%;
+}
+
+/* Code: line numbers, highlighted lines, solid background, no border. */
+.prose .code {
+  margin: 6px 0 28px;
+  padding: 14px 0;
+  background: var(--code-bg);
+  overflow-x: auto;
+}
+.prose .code pre {
+  margin: 0;
+}
+.prose .code code {
+  display: block;
+  min-width: max-content;
+  font-family: var(--font-mono);
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+.prose .code .line {
+  display: block;
+  padding: 0 20px;
+  white-space: pre;
+}
+.prose .code .line.hl {
+  background: var(--hl);
+}
+.prose .code .ln {
+  display: inline-block;
+  width: 2.2em;
+  color: var(--ln);
+  user-select: none;
+}
+.prose .code .hl .ln {
+  color: var(--accent-text);
+}
+
+.prose figure {
+  margin: 8px 0 32px;
+}
+.prose figure img {
+  display: block;
+  width: 100%;
+}
+.prose figcaption {
+  margin-top: 10px;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--muted);
+}
+/* Code and images run a little wider than the text column. */
+@media (min-width: 800px) {
+  .prose .code,
+  .prose figure {
+    margin-left: -40px;
+    margin-right: -40px;
+  }
+}
+
+.prose .footnotes {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.prose .footnotes .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.prose sup a {
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--muted);
 }

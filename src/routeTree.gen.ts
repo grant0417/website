@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PowderRouteImport } from './routes/powder'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
-import { Route as BlogPostRouteImport } from './routes/blog/$post'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
+import { Route as BlogCoversRouteImport } from './routes/blog/covers'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -24,48 +26,74 @@ const PowderRoute = PowderRouteImport.update({
   path: '/powder',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogPostRoute = BlogPostRouteImport.update({
-  id: '/blog/$post',
-  path: '/blog/$post',
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogCoversRoute = BlogCoversRouteImport.update({
+  id: '/blog/covers',
+  path: '/blog/covers',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/powder': typeof PowderRoute
-  '/blog/$post': typeof BlogPostRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog/covers': typeof BlogCoversRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/powder': typeof PowderRoute
-  '/blog/$post': typeof BlogPostRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog/covers': typeof BlogCoversRoute
   '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/powder': typeof PowderRoute
-  '/blog/$post': typeof BlogPostRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog/covers': typeof BlogCoversRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/powder' | '/blog/$post' | '/blog/'
+  fullPaths:
+    '/' | '/powder' | '/rss.xml' | '/blog/$slug' | '/blog/covers' | '/blog/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/powder' | '/blog/$post' | '/blog'
-  id: '__root__' | '/' | '/powder' | '/blog/$post' | '/blog/'
+  to: '/' | '/powder' | '/rss.xml' | '/blog/$slug' | '/blog/covers' | '/blog'
+  id:
+    | '__root__'
+    | '/'
+    | '/powder'
+    | '/rss.xml'
+    | '/blog/$slug'
+    | '/blog/covers'
+    | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PowderRoute: typeof PowderRoute
-  BlogPostRoute: typeof BlogPostRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  BlogCoversRoute: typeof BlogCoversRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
@@ -85,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PowderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -92,11 +127,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/$post': {
-      id: '/blog/$post'
-      path: '/blog/$post'
-      fullPath: '/blog/$post'
-      preLoaderRoute: typeof BlogPostRouteImport
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/covers': {
+      id: '/blog/covers'
+      path: '/blog/covers'
+      fullPath: '/blog/covers'
+      preLoaderRoute: typeof BlogCoversRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -105,7 +147,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PowderRoute: PowderRoute,
-  BlogPostRoute: BlogPostRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  BlogCoversRoute: BlogCoversRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
