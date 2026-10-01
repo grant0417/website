@@ -32,10 +32,13 @@ export function hexToRgb(hex: string): [number, number, number] {
 
 export type Palette = { name: string; bg: string; fg: string };
 
+export const LIGHT: Palette = { name: "Light", bg: "#FFFFFF", fg: "#000000" };
+export const DARK: Palette = { name: "Dark", bg: "#000000", fg: "#FFFFFF" };
+
 export const PALETTES: Palette[] = [
-  { name: "Paper", bg: "#F2EFE6", fg: "#141414" },
+  LIGHT,
+  DARK,
   { name: "Pocket", bg: "#9BBC0F", fg: "#0F380F" },
   { name: "Ember", bg: "#1B1B3A", fg: "#FF7A3D" },
   { name: "Cobalt", bg: "#E8EDFF", fg: "#1F3BFF" },
-  { name: "Night", bg: "#0E0E0E", fg: "#E8E6E0" },
 ];

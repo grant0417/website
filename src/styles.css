@@ -5,6 +5,18 @@
   --font-pixel: "Silkscreen", ui-monospace, monospace;
 }
 
+/* Home page colors before a palette is picked: follow the system theme. */
+.theme-auto {
+  --fg: #000000;
+  --bg: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  .theme-auto {
+    --fg: #ffffff;
+    --bg: #000000;
+  }
+}
+
 body {
   @apply bg-zinc-950 text-zinc-50;
 }

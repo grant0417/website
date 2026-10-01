@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { weeks, days, total } = Route.useLoaderData();
-  const [palette, setPalette] = usePalette("Cobalt");
+  const { palette, chosen, choose } = usePalette();
   const [playing, setPlaying] = useState(false);
   const [week, setWeek] = useState(-1);
 
@@ -50,8 +50,12 @@ function Home() {
 
   return (
     <div
-      className="flex min-h-screen flex-col bg-(--bg) font-display text-(--fg)"
-      style={{ "--fg": palette.fg, "--bg": palette.bg } as React.CSSProperties}
+      className={`flex min-h-screen flex-col bg-(--bg) font-display text-(--fg) ${chosen ? "" : "theme-auto"}`}
+      style={
+        chosen
+          ? ({ "--fg": chosen.fg, "--bg": chosen.bg } as React.CSSProperties)
+          : undefined
+      }
     >
       <div className="relative border-b-[3px] border-(--fg)">
         <RidgeField ref={field} weeks={weeks} palette={palette} />
@@ -61,8 +65,8 @@ function Home() {
           </h1>
         </div>
         <PaletteMenu
-          palette={palette}
-          onChange={setPalette}
+          chosen={chosen}
+          onChange={choose}
           className="absolute top-[clamp(12px,3vw,44px)] right-[clamp(12px,3vw,44px)]"
         />
       </div>
@@ -94,10 +98,10 @@ function Home() {
           weeks={weeks}
           days={days}
           playhead={week}
-          className="flex-[1_1_360px]"
+          className="flex-[1_1_360px] max-sm:order-last max-sm:basis-full"
         />
         {total > 0 && (
-          <span className="font-pixel text-[13px] whitespace-nowrap">
+          <span className="font-pixel text-[13px] whitespace-nowrap max-sm:ml-auto">
             {total.toLocaleString("en-US")} contributions
           </span>
         )}
