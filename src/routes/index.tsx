@@ -1,12 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { GithubIcon, PlayIcon } from "@/components/icons";
-import { RustPill, WasmPill } from "@/components/pill";
 import Project from "@/components/project";
 import Divider from "@/components/divider";
 
 export const Route = createFileRoute("/")({
   component: Home,
+  head: () => ({ meta: [{ title: "Grant Gurvis" }] }),
 });
+
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <section
+      className="flex flex-col space-y-8 pb-4 pt-5"
+      id={title.toLowerCase()}
+    >
+      <h2 className="text-white text-3xl font-bold">{title}</h2>
+      {children}
+    </section>
+  );
+}
 
 function Home() {
   return (
@@ -19,7 +36,6 @@ function Home() {
             Interested in Rust 🦀 and more
           </p>
         </div>
-
         <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-4">
           {[
             {
@@ -53,13 +69,28 @@ function Home() {
             </a>
           ))}
         </div>
-
         <Divider />
-
-        <section
-          id="programming-projects"
-          className="flex flex-col space-y-8 pb-4 pt-5"
-        >
+        <Section title="Work">
+          <Project
+            title="Stealth Startup"
+            date="2025-present"
+            /* description=""
+            links={[]} */
+          />
+          <Project
+            title="Amazon Web Services"
+            date="2023-2025"
+            /* description=""
+            links={[]} */
+          />
+          <Project
+            title="Fig"
+            date="2021-2023"
+            /* description="Aquired by Amazon Web Services"
+            links={[]} */
+          />
+        </Section>
+        {/*         <Section title="Projects">
           <Project
             title="Ray Tracer"
             description="A path
@@ -78,10 +109,7 @@ function Home() {
                 icon: <PlayIcon />,
               },
             ]}
-            img={<img src="/images/cornell.png" alt="Ray Tracer Image" />}
-            pills={[<RustPill key={0} />, <WasmPill key={1} />]}
           />
-
           <Project
             title="Chess AI"
             description="A Chess AI
@@ -94,13 +122,10 @@ function Home() {
                 icon: <GithubIcon />,
               },
             ]}
-            img={<img src="/images/chess.png" alt="Chess AI Image" />}
-            pills={[<RustPill key={0} />]}
           />
-
           <Project
             title="6502 Assembler and Emulator"
-            description="The assembler compiles 6502 assembly into a binary for the emulator or
+            description="The assembler compiles 6502 assembly into a binary for the emulator or 
             hex codes with debugging information. The emulator also supports all
             6502 opcodes and addressing modes while being cycle-accurate. The CPU
             is easily extended via memory maps."
@@ -116,10 +141,9 @@ function Home() {
                 icon: <GithubIcon />,
               },
             ]}
-            img={<img src="/images/6502.png" alt="6502 Image" />}
             pills={[<RustPill key={0} />]}
           />
-        </section>
+        </Section> */}
       </div>
     </main>
   );

@@ -2,13 +2,15 @@ import { cloneElement } from "react";
 
 const Project = ({
   title,
+  date,
   description,
   links,
   img,
   pills = [],
 }: {
   title: string;
-  description: string;
+  date?: string;
+  description?: string;
   links?: { text: string; url: string; icon: React.ReactNode }[];
   img?: React.ReactNode;
   pills?: React.ReactElement[];
@@ -16,7 +18,17 @@ const Project = ({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex flex-row flex-wrap gap-2 items-baseline">
-        <h3 className="text-3xl text-white tracking-wider">{title}</h3>
+        <h3 className="text-3xl text-white tracking-wider">
+          {title}
+          {date && (
+            <>
+              {" "}
+              <span className="text-lg tracking-normal">
+                ({date}){/*  */}
+              </span>
+            </>
+          )}
+        </h3>
         {pills.map((pill, i) => cloneElement(pill, { key: i }))}
       </div>
       {links && (
@@ -34,8 +46,7 @@ const Project = ({
         </div>
       )}
       {img && img}
-
-      <p className="text-white">{description}</p>
+      {description && <p className="text-white">{description}</p>}
     </div>
   );
 };
