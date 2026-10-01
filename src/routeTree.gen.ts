@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PowderRouteImport } from './routes/powder'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as BlogPostRouteImport } from './routes/blog/$post'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PowderRoute = PowderRouteImport.update({
+  id: '/powder',
+  path: '/powder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
@@ -31,30 +37,34 @@ const BlogPostRoute = BlogPostRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/powder': typeof PowderRoute
   '/blog/$post': typeof BlogPostRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/powder': typeof PowderRoute
   '/blog/$post': typeof BlogPostRoute
   '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/powder': typeof PowderRoute
   '/blog/$post': typeof BlogPostRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/blog/$post' | '/blog/'
+  fullPaths: '/' | '/powder' | '/blog/$post' | '/blog/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/blog/$post' | '/blog'
-  id: '__root__' | '/' | '/blog/$post' | '/blog/'
+  to: '/' | '/powder' | '/blog/$post' | '/blog'
+  id: '__root__' | '/' | '/powder' | '/blog/$post' | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PowderRoute: typeof PowderRoute
   BlogPostRoute: typeof BlogPostRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/powder': {
+      id: '/powder'
+      path: '/powder'
+      fullPath: '/powder'
+      preLoaderRoute: typeof PowderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PowderRoute: PowderRoute,
   BlogPostRoute: BlogPostRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
