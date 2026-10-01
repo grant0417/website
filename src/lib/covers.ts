@@ -45,9 +45,37 @@ export const COVER_PALETTES: CoverPalette[] = [
   { bg: "#FFF8D6", fg: "#5B3A00" },
 ];
 
-export type CoverLook = { style: number; palette: CoverPalette };
+export type CoverParams = Record<string, number>;
 
-function hash(s: string): number {
+/** Everything that decides a cover. Without a seed, the title is the seed. */
+export type CoverLook = {
+  style: number;
+  palette: CoverPalette;
+  seed?: number;
+  params?: CoverParams;
+};
+
+/**
+ * A post's `cover` front matter: a style name, or a style with its seed,
+ * palette (1-based) and any knob values.
+ */
+export type CoverSpec = string | Record<string, string | number>;
+
+function parseSpec(cover?: CoverSpec) {
+  if (typeof cover !== "object") return { style: cover, params: {} };
+  const { style, seed, palette, ...rest } = cover;
+  const params: CoverParams = {};
+  for (const [k, v] of Object.entries(rest))
+    if (Number.isFinite(Number(v))) params[k] = Number(v);
+  return {
+    style: style === undefined ? undefined : String(style),
+    seed: seed === undefined ? undefined : Number(seed),
+    palette: palette === undefined ? undefined : Number(palette),
+    params,
+  };
+}
+
+export function hash(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i);
@@ -56,18 +84,38 @@ function hash(s: string): number {
   return h >>> 0;
 }
 
+export const styleIndex = (name?: string) =>
+  COVER_STYLES.findIndex((s) => s.toLowerCase() === name?.toLowerCase());
+
 /** The look a title gets on its own, before neighbor rules. */
-export function lookFor(title: string, pinned?: string): CoverLook {
-  const pinnedStyle = COVER_STYLES.findIndex(
-    (s) => s.toLowerCase() === pinned?.toLowerCase(),
-  );
+export function lookFor(title: string, cover?: CoverSpec): CoverLook {
+  const { style: name, seed, palette, params } = parseSpec(cover);
+  const pinnedStyle = styleIndex(name);
+  const pinnedPalette = COVER_PALETTES[(palette ?? 0) - 1];
   return {
     style:
       pinnedStyle >= 0
         ? pinnedStyle
         : hash(`${title}#style`) % COVER_STYLES.length,
-    palette: COVER_PALETTES[hash(`${title}#pal`) % COVER_PALETTES.length],
+    palette:
+      pinnedPalette ??
+      COVER_PALETTES[hash(`${title}#pal`) % COVER_PALETTES.length],
+    seed,
+    params,
   };
+}
+
+/** Front matter that reproduces a look exactly. */
+export function coverFrontMatter(look: CoverLook, seed: number): string {
+  const lines = [
+    "cover:",
+    `  style: ${COVER_STYLES[look.style].toLowerCase()}`,
+    `  seed: ${seed}`,
+    `  palette: ${COVER_PALETTES.indexOf(look.palette) + 1}`,
+  ];
+  for (const [k, v] of Object.entries(look.params ?? {}))
+    lines.push(`  ${k}: ${Number(v.toFixed(4))}`);
+  return lines.join("\n");
 }
 
 /**
@@ -75,21 +123,22 @@ export function lookFor(title: string, pinned?: string): CoverLook {
  * palette: on a clash, step to the next one (pinned styles stay put).
  */
 export function assignLooks(
-  posts: { title: string; cover?: string }[],
+  posts: { title: string; cover?: CoverSpec }[],
 ): CoverLook[] {
   let prevStyle = -1;
   let prevPalette = -1;
   return posts.map(({ title, cover }) => {
     const own = lookFor(title, cover);
+    const pinned = parseSpec(cover);
     let style = own.style;
     let palette = COVER_PALETTES.indexOf(own.palette);
-    if (style === prevStyle && !cover)
+    if (style === prevStyle && styleIndex(pinned.style) < 0)
       style = (style + 1) % COVER_STYLES.length;
-    if (palette === prevPalette)
+    if (palette === prevPalette && !pinned.palette)
       palette = (palette + 1) % COVER_PALETTES.length;
     prevStyle = style;
     prevPalette = palette;
-    return { style, palette: COVER_PALETTES[palette] };
+    return { ...own, style, palette: COVER_PALETTES[palette] };
   });
 }
 
@@ -125,20 +174,55 @@ class Mask {
   }
 }
 
-/** Per-pixel value in [0, 1]. Binary styles threshold at 0.5; the rest dither. */
-function field(title: string, style: number, W: number, H: number): Field {
-  let seed = hash(title);
+/** A tunable setting of a style, reported by `coverKnobs`. */
+export type CoverKnob = {
+  name: string;
+  min: number;
+  max: number;
+  /** 0 for continuous, 1 for whole numbers. */
+  step: number;
+  value: number;
+};
+
+const TAU = Math.PI * 2;
+
+/**
+ * Per-pixel value in [0, 1]. Binary styles threshold at 0.5; the rest dither.
+ * Every setting is a knob: an override from `params` if there is one, else a
+ * value drawn from the seed. Knobs always consume their random draw, so
+ * changing one leaves everything else where it was.
+ */
+function field(
+  seed: number,
+  style: number,
+  W: number,
+  H: number,
+  params: CoverParams = {},
+  report?: CoverKnob[],
+): Field {
   const r = () => {
     seed = (seed * 1664525 + 1013904223) >>> 0;
     return seed / 4294967296;
   };
+  const knob = (name: string, min: number, max: number, step = 0) => {
+    const drawn = min + r() * (max - min);
+    let v = params[name] ?? drawn;
+    if (step) v = Math.round(v / step) * step;
+    v = Math.min(max, Math.max(min, v));
+    report?.push({ name, min, max, step, value: v });
+    return v;
+  };
+  const int = (name: string, min: number, max: number) =>
+    knob(name, min, max, 1);
+
   switch (COVER_STYLES[style]) {
     case "Waves": {
-      const a = r() * 6.28,
-        f1 = 3 + r() * 6,
-        f2 = 2 + r() * 5;
-      const cx = (0.2 + r() * 0.6) * W,
-        cy = (0.2 + r() * 0.6) * H;
+      const f1 = knob("rings", 3, 9),
+        f2 = knob("wobble", 0, 7),
+        lobes = int("lobes", 1, 6),
+        a = knob("angle", 0, TAU);
+      const cx = knob("x", 0, 1) * W,
+        cy = knob("y", 0, 1) * H;
       return {
         binary: false,
         value: (x, y) => {
@@ -149,21 +233,25 @@ function field(title: string, style: number, W: number, H: number): Field {
             0.5 +
             0.5 *
               Math.sin(
-                Math.hypot(dx, dy) * f1 * 6 + Math.sin(t * 3 + a) * f2 * 0.5,
+                Math.hypot(dx, dy) * f1 * 6 +
+                  Math.sin(t * lobes + a) * f2 * 0.5,
               )
           );
         },
       };
     }
     case "Ridges": {
-      const k = 7 + Math.floor(r() * 6);
+      const k = int("ridges", 3, 16),
+        height = knob("height", 0.05, 0.4),
+        width = knob("width", 0.02, 0.15),
+        peaks = int("peaks", 1, 4);
       const ridges = Array.from({ length: k }, (_, j) => ({
         y0: H * (0.22 + (j * 0.72) / k),
-        peaks: [0, 1, 2].map(() => ({
+        peaks: Array.from({ length: peaks }, () => ({
           c: 0.1 + r() * 0.8,
-          w: 0.04 + r() * 0.08,
+          w: width * (0.5 + r()),
         })),
-        amp: H * (0.08 + r() * 0.22),
+        amp: H * height * (0.3 + r() * 0.7),
       }));
       return {
         binary: false,
@@ -186,10 +274,13 @@ function field(title: string, style: number, W: number, H: number): Field {
       };
     }
     case "Rings": {
-      const centers = Array.from({ length: 1 + Math.floor(r() * 3) }, () => ({
+      const n = int("centers", 1, 5),
+        freq = knob("frequency", 4, 30),
+        spread = knob("spread", 0, 0.6);
+      const centers = Array.from({ length: n }, () => ({
         x: r() * W,
         y: r() * H,
-        f: (8 + r() * 14) / H,
+        f: (freq * (1 - spread / 2 + r() * spread)) / H,
       }));
       return {
         binary: false,
@@ -202,8 +293,8 @@ function field(title: string, style: number, W: number, H: number): Field {
       };
     }
     case "Truchet": {
-      const s = Math.max(6, Math.round(H / (3 + r() * 4)));
-      const w = s * 0.13,
+      const s = Math.max(4, Math.round(H / knob("tiles", 2, 10))),
+        w = s * knob("thickness", 0.04, 0.3),
         sd = seed;
       return {
         binary: true,
@@ -222,7 +313,8 @@ function field(title: string, style: number, W: number, H: number): Field {
       };
     }
     case "Maze": {
-      const s = Math.max(5, Math.round(H / (5 + r() * 6))),
+      const s = Math.max(3, Math.round(H / knob("tiles", 3, 16))),
+        w = knob("thickness", 0.6, 3),
         sd = seed;
       return {
         binary: true,
@@ -233,20 +325,23 @@ function field(title: string, style: number, W: number, H: number): Field {
             ly = y - ty * s;
           const flip =
             ((Math.imul(tx, 2654435761) ^ Math.imul(ty, 40503) ^ sd) >>> 0) % 2;
-          return (flip ? Math.abs(lx - ly) : Math.abs(lx + ly - (s - 1))) < 1.3
+          return (flip ? Math.abs(lx - ly) : Math.abs(lx + ly - (s - 1))) < w
             ? 1
             : 0;
         },
       };
     }
     case "Contours": {
-      const blobs = Array.from({ length: 5 }, () => ({
+      const n = int("hills", 1, 9),
+        size = knob("size", 0.15, 1),
+        bands = knob("lines", 2, 16),
+        line = knob("thickness", 0.06, 0.5);
+      const blobs = Array.from({ length: n }, () => ({
         x: r() * W,
         y: r() * H,
-        rad: H * (0.3 + r() * 0.7),
+        rad: H * size * (0.4 + r() * 0.6),
         a: r() < 0.3 ? -1 : 1,
       }));
-      const bands = 5 + r() * 7;
       return {
         binary: true,
         value: (x, y) => {
@@ -255,15 +350,18 @@ function field(title: string, style: number, W: number, H: number): Field {
             f +=
               b.a *
               Math.exp(-((x - b.x) ** 2 + (y - b.y) ** 2) / (b.rad * b.rad));
-          return f * bands - Math.floor(f * bands) < 0.17 ? 1 : 0;
+          return f * bands - Math.floor(f * bands) < line ? 1 : 0;
         },
       };
     }
     case "Cells": {
-      const pts = Array.from({ length: 8 + Math.floor(r() * 12) }, () => ({
+      const n = int("cells", 3, 40),
+        border = knob("border", 0.6, 4),
+        fill = knob("fill", 0, 0.7);
+      const pts = Array.from({ length: n }, () => ({
         x: r() * W,
         y: r() * H,
-        level: [0.12, 0.38, 0.62][Math.floor(r() * 3)],
+        level: [0.12, 0.38, 0.62][Math.floor(r() * 3)] * (fill / 0.62),
       }));
       return {
         binary: false,
@@ -279,17 +377,19 @@ function field(title: string, style: number, W: number, H: number): Field {
               k = i;
             } else if (d < d2) d2 = d;
           });
-          return d2 - d1 < 1.4 ? 1 : pts[k].level;
+          return d2 - d1 < border ? 1 : pts[k].level;
         },
       };
     }
     case "Automaton": {
-      const rule = [30, 90, 110, 45, 73, 150][Math.floor(r() * 6)];
-      const c = 2,
+      const rules = [30, 45, 54, 60, 73, 90, 105, 110, 126, 150, 182];
+      const rule = rules[int("rule", 0, rules.length - 1)];
+      const c = int("cell", 1, 5),
+        density = knob("density", 0.02, 0.98),
         cols = Math.ceil(W / c),
         rows = Math.ceil(H / c);
       const grid: number[][] = [
-        Array.from({ length: cols }, () => (r() < 0.5 ? 1 : 0)),
+        Array.from({ length: cols }, () => (r() < density ? 1 : 0)),
       ];
       for (let y = 1; y < rows; y++) {
         const p = grid[y - 1];
@@ -310,9 +410,10 @@ function field(title: string, style: number, W: number, H: number): Field {
       };
     }
     case "Halftone": {
-      const s = Math.max(5, Math.round(H / (7 + r() * 6))),
-        a = r() * 6.28,
-        f = 2 + r() * 4;
+      const s = Math.max(3, Math.round(H / knob("dots", 4, 20))),
+        a = knob("angle", 0, TAU),
+        f = knob("frequency", 0.5, 8),
+        size = knob("size", 0.3, 0.9);
       return {
         binary: true,
         value: (x, y) => {
@@ -325,36 +426,39 @@ function field(title: string, style: number, W: number, H: number): Field {
                 ((cx * Math.cos(a) + cy * Math.sin(a)) / H) * f +
                   Math.sin((cy / H) * 3),
               );
-          return Math.hypot(x + 0.5 - cx, y + 0.5 - cy) < k * s * 0.62 ? 1 : 0;
+          return Math.hypot(x + 0.5 - cx, y + 0.5 - cy) < k * s * size ? 1 : 0;
         },
       };
     }
     case "Stripes": {
-      const ang = r() * 3.14,
-        f = (5 + r() * 9) / H,
-        g = (1 + r() * 3) / H;
-      const amp = H * (0.05 + r() * 0.18),
-        ph = r() * 6.28;
+      const ang = knob("angle", 0, Math.PI),
+        f = knob("stripes", 3, 20) / H,
+        amp = H * knob("wobble", 0, 0.3),
+        g = knob("waves", 0.5, 5) / H,
+        cut = knob("weight", -0.8, 0.8),
+        ph = r() * TAU;
       return {
         binary: true,
         value: (x, y) => {
           const u = x * Math.cos(ang) + y * Math.sin(ang);
           const v = -x * Math.sin(ang) + y * Math.cos(ang);
-          return Math.sin((u + Math.sin(v * g * 6.28 + ph) * amp) * f * 6.28) >
-            0.15
+          return Math.sin((u + Math.sin(v * g * TAU + ph) * amp) * f * TAU) >
+            cut
             ? 1
             : 0;
         },
       };
     }
     case "Life": {
-      const c = 2,
+      const c = int("cell", 1, 5),
+        density = knob("density", 0.1, 0.7),
+        gens = int("generations", 1, 24),
         cols = Math.ceil(W / c),
         rows = Math.ceil(H / c);
       let g: number[][] = Array.from({ length: rows }, () =>
-        Array.from({ length: cols }, () => (r() < 0.36 ? 1 : 0)),
+        Array.from({ length: cols }, () => (r() < density ? 1 : 0)),
       );
-      for (let k = 0; k < 9; k++) {
+      for (let k = 0; k < gens; k++) {
         g = g.map((row, y) =>
           row.map((alive, x) => {
             let n = 0;
@@ -374,10 +478,11 @@ function field(title: string, style: number, W: number, H: number): Field {
       };
     }
     case "Spiral": {
-      const cx = (0.25 + r() * 0.5) * W,
-        cy = (0.25 + r() * 0.5) * H;
-      const arms = 2 + Math.floor(r() * 5),
-        twist = (10 + r() * 22) / H;
+      const arms = int("arms", 1, 9),
+        twist = knob("twist", 0, 40) / H,
+        fade = knob("fade", 0, 1);
+      const cx = knob("x", 0, 1) * W,
+        cy = knob("y", 0, 1) * H;
       return {
         binary: false,
         value: (x, y) => {
@@ -385,7 +490,7 @@ function field(title: string, style: number, W: number, H: number): Field {
             t = Math.atan2(y - cy, x - cx);
           return (
             (0.5 + 0.5 * Math.sin(arms * t + d * twist)) *
-            Math.min(1, 0.35 + d / H)
+            Math.min(1, 1 - fade * 0.65 + (d / H) * fade)
           );
         },
       };
@@ -393,21 +498,25 @@ function field(title: string, style: number, W: number, H: number): Field {
     case "Flow": {
       // Particles traced along a smooth angle field.
       const m = new Mask(W, H);
-      const f1 = (1.5 + r() * 3) / H,
-        f2 = (1.5 + r() * 3) / H,
-        a = r() * 6.28,
-        turn = 1 + r() * 2;
+      const scale = knob("scale", 0.5, 6),
+        turn = knob("turn", 0.3, 4),
+        density = knob("density", 0.2, 3),
+        len = knob("length", 5, 150),
+        a = r() * TAU,
+        ratio = 0.5 + r();
+      const f1 = scale / H,
+        f2 = (scale * ratio) / H;
       const angle = (x: number, y: number) =>
-        (Math.sin(x * f1 * 6.28 + a) +
-          Math.cos(y * f2 * 6.28 - a) +
+        (Math.sin(x * f1 * TAU + a) +
+          Math.cos(y * f2 * TAU - a) +
           Math.sin((x + y) * f1 * 3)) *
         turn;
-      const n = Math.round((W * H) / 180);
+      const n = Math.round(((W * H) / 180) * density);
       for (let i = 0; i < n; i++) {
         let x = r() * W,
           y = r() * H;
-        const len = 20 + r() * 60;
-        for (let k = 0; k < len; k++) {
+        const l = len * (0.4 + r() * 0.6);
+        for (let k = 0; k < l; k++) {
           m.dot(x, y);
           const t = angle(x, y);
           x += Math.cos(t);
@@ -418,8 +527,9 @@ function field(title: string, style: number, W: number, H: number): Field {
     }
     case "Weave": {
       // Over-under threads; each crossing shades whichever thread is on top.
-      const t = Math.max(6, Math.round(H / (5 + r() * 6))),
-        gap = Math.max(1, Math.round(t * 0.18));
+      const t = Math.max(4, Math.round(H / knob("threads", 3, 14))),
+        gap = Math.max(0, Math.round(t * knob("gap", 0, 0.35))),
+        twill = int("twill", 1, 3);
       return {
         binary: false,
         value: (x, y) => {
@@ -430,7 +540,9 @@ function field(title: string, style: number, W: number, H: number): Field {
           const inV = lx >= gap && lx < t - gap,
             inH = ly >= gap && ly < t - gap;
           if (!inV && !inH) return 0;
-          const verticalOnTop = (cx + cy) % 2 === 0;
+          const verticalOnTop =
+            Math.floor((((cx + cy) % (2 * twill)) + 2 * twill) / twill) % 2 ===
+            0;
           const across = verticalOnTop || !inH ? (inV ? lx : ly) : ly;
           const shade =
             0.3 +
@@ -441,32 +553,33 @@ function field(title: string, style: number, W: number, H: number): Field {
     }
     case "Plasma": {
       // Old-school demo plasma, banded into a few tones.
-      const f = [0, 1, 2, 3].map(() => (2 + r() * 6) / H),
+      const scale = knob("scale", 0.5, 10),
+        bands = int("bands", 2, 8);
+      const f = [0, 1, 2, 3].map(() => (scale * (0.4 + r() * 1.2)) / H),
         cx = r() * W,
-        cy = r() * H,
-        bands = 3 + Math.floor(r() * 3);
+        cy = r() * H;
       return {
         binary: false,
         value: (x, y) => {
           const v =
-            Math.sin(x * f[0] * 6.28) +
-            Math.sin(y * f[1] * 6.28) +
+            Math.sin(x * f[0] * TAU) +
+            Math.sin(y * f[1] * TAU) +
             Math.sin((x + y) * f[2] * 4) +
-            Math.sin(Math.hypot(x - cx, y - cy) * f[3] * 6.28);
+            Math.sin(Math.hypot(x - cx, y - cy) * f[3] * TAU);
           return Math.round(((v + 4) / 8) * bands) / bands;
         },
       };
     }
     case "Fractal": {
       // Bitwise fractals: Sierpinski triangles (x & y), XOR carpets or
-      // multiplication tables, tiled every 64 or 128 cells.
-      const sc = 1 + Math.floor(r() * 2);
-      const bits = r() < 0.5 ? 63 : 127;
-      const ox = Math.floor(r() * 128),
-        oy = Math.floor(r() * 128);
-      const mode = Math.floor(r() * 3),
-        k = [3, 5, 7, 11][Math.floor(r() * 4)],
-        sh = 3 + Math.floor(r() * 3);
+      // multiplication tables, tiled every 2^tile cells.
+      const mode = int("mode", 0, 2),
+        sc = int("scale", 1, 4),
+        bits = (1 << int("tile", 4, 8)) - 1,
+        k = [3, 5, 7, 11, 13][int("modulus", 0, 4)],
+        sh = int("shift", 2, 7);
+      const ox = Math.floor(knob("x", 0, 1) * 256),
+        oy = Math.floor(knob("y", 0, 1) * 256);
       return {
         binary: true,
         value: (x, y) => {
@@ -480,19 +593,19 @@ function field(title: string, style: number, W: number, H: number): Field {
     }
     case "Moiré": {
       // Two gratings a few degrees apart; their XOR makes the interference.
-      const a = r() * 3.14,
-        d = 0.03 + r() * 0.12,
-        f = (14 + r() * 18) / H,
-        circles = r() < 0.4;
-      const cx = r() * W,
-        cy = r() * H;
+      const a = knob("angle", 0, Math.PI),
+        d = knob("offset", 0.005, 0.25),
+        f = knob("lines", 6, 40) / H,
+        circles = int("circles", 0, 1);
+      const cx = knob("x", 0, 1) * W,
+        cy = knob("y", 0, 1) * H;
       const grate = (x: number, y: number, ang: number) =>
-        Math.sin((x * Math.cos(ang) + y * Math.sin(ang)) * f * 6.28) > 0;
+        Math.sin((x * Math.cos(ang) + y * Math.sin(ang)) * f * TAU) > 0;
       return {
         binary: true,
         value: (x, y) => {
           const g1 = circles
-            ? Math.sin(Math.hypot(x - cx, y - cy) * f * 6.28) > 0
+            ? Math.sin(Math.hypot(x - cx, y - cy) * f * TAU) > 0
             : grate(x, y, a);
           return g1 !== grate(x, y, a + d) ? 1 : 0;
         },
@@ -501,25 +614,28 @@ function field(title: string, style: number, W: number, H: number): Field {
     case "Stars": {
       // A starfield, a few bright crosses, and constellations joining nearby stars.
       const m = new Mask(W, H);
-      const stars = Array.from({ length: Math.round((W * H) / 30) }, () => ({
-        x: r() * W,
-        y: r() * H,
-        b: r(),
-      }));
+      const density = knob("density", 5, 80),
+        bright = knob("bright", 0, 0.1),
+        groups = int("constellations", 0, 8),
+        reach = knob("reach", 0.2, 1);
+      const stars = Array.from(
+        { length: Math.round((W * H * density) / 1000) },
+        () => ({ x: r() * W, y: r() * H, b: r() }),
+      );
       for (const s of stars) {
         m.dot(s.x, s.y);
-        if (s.b > 0.97) {
+        if (s.b < bright) {
           const l = 2 + Math.floor(r() * 3);
           m.line(s.x - l, s.y, s.x + l, s.y);
           m.line(s.x, s.y - l, s.x, s.y + l);
         }
       }
-      for (let c = 0; c < 2 + Math.floor(r() * 3); c++) {
+      for (let c = 0; c < groups; c++) {
         let x = r() * W,
           y = r() * H;
         for (let k = 0; k < 3 + Math.floor(r() * 4); k++) {
-          const nx = Math.max(2, Math.min(W - 3, x + (r() - 0.5) * H * 0.6));
-          const ny = Math.max(2, Math.min(H - 3, y + (r() - 0.5) * H * 0.6));
+          const nx = Math.max(2, Math.min(W - 3, x + (r() - 0.5) * H * reach));
+          const ny = Math.max(2, Math.min(H - 3, y + (r() - 0.5) * H * reach));
           m.line(x, y, nx, ny);
           m.disc(nx, ny, 1);
           x = nx;
@@ -530,13 +646,16 @@ function field(title: string, style: number, W: number, H: number): Field {
     }
     case "Hatch": {
       // Pen-plotter crosshatching: more line families where the field is darker.
-      const blobs = Array.from({ length: 5 }, () => ({
+      const p = int("spacing", 2, 8),
+        n = int("shapes", 1, 9),
+        size = knob("size", 0.08, 0.7),
+        dark = knob("darkness", 0.3, 2);
+      const blobs = Array.from({ length: n }, () => ({
         x: r() * W,
         y: r() * H,
-        rad: H * (0.15 + r() * 0.3),
+        rad: H * size * (0.5 + r() * 0.8),
         w: r() < 0.3 ? -0.6 : 1,
       }));
-      const p = 3 + Math.floor(r() * 3);
       return {
         binary: true,
         value: (x, y) => {
@@ -545,6 +664,7 @@ function field(title: string, style: number, W: number, H: number): Field {
             v +=
               b.w *
               Math.exp(-((x - b.x) ** 2 + (y - b.y) ** 2) / (b.rad * b.rad));
+          v *= dark;
           if (v > 0.1 && (x + y) % p === 0) return 1;
           if (v > 0.35 && (((x - y) % p) + p) % p === 0) return 1;
           if (v > 0.6 && y % p === 0) return 1;
@@ -555,17 +675,17 @@ function field(title: string, style: number, W: number, H: number): Field {
     }
     case "Mandala": {
       // Polar coordinates folded into k mirrored wedges.
-      const cx = W / 2 + (r() - 0.5) * W * 0.3,
+      const k = int("wedges", 3, 18),
+        f1 = knob("rings", 4, 40) / H,
+        f2 = knob("petals", 0.5, 8),
+        amp = knob("bend", 0, 5);
+      const cx = knob("x", 0.2, 0.8) * W,
         cy = H / 2;
-      const k = 6 + Math.floor(r() * 7),
-        f1 = (10 + r() * 20) / H,
-        f2 = 2 + r() * 6,
-        amp = 1 + r() * 3;
       return {
         binary: false,
         value: (x, y) => {
           const d = Math.hypot(x - cx, y - cy);
-          const wedge = (Math.PI * 2) / k;
+          const wedge = TAU / k;
           const t = Math.abs(
             (((Math.atan2(y - cy, x - cx) % wedge) + wedge) % wedge) -
               wedge / 2,
@@ -582,7 +702,10 @@ function field(title: string, style: number, W: number, H: number): Field {
     case "Circuit": {
       // Traces on a grid that turn in 45° steps and end in pads.
       const m = new Mask(W, H);
-      const g = 4 + Math.floor(r() * 3);
+      const g = int("grid", 2, 9),
+        density = knob("density", 0.2, 3),
+        segs = int("turns", 1, 8),
+        pad = int("pads", 0, 3);
       const dirs = [
         [1, 0],
         [1, 1],
@@ -593,13 +716,12 @@ function field(title: string, style: number, W: number, H: number): Field {
         [0, -1],
         [1, -1],
       ];
-      const traces = 10 + Math.floor((W * H) / 900);
+      const traces = Math.round((10 + (W * H) / 900) * density);
       for (let i = 0; i < traces; i++) {
         let x = Math.floor((r() * W) / g) * g,
           y = Math.floor((r() * H) / g) * g;
         let dir = Math.floor(r() * 4) * 2;
-        m.disc(x, y, 2);
-        const segs = 2 + Math.floor(r() * 4);
+        if (pad) m.disc(x, y, pad);
         for (let sgm = 0; sgm < segs; sgm++) {
           const len = (2 + Math.floor(r() * 6)) * g;
           const [dx, dy] = dirs[dir];
@@ -610,23 +732,32 @@ function field(title: string, style: number, W: number, H: number): Field {
           y = ny;
           dir = (dir + (r() < 0.5 ? 1 : 7)) % 8;
         }
-        m.disc(x, y, 2);
-        m.bits[Math.round(y) * W + Math.round(x)] = 0; // drill hole
+        if (pad) {
+          m.disc(x, y, pad);
+          // Drill hole.
+          const hx = Math.round(x),
+            hy = Math.round(y);
+          if (pad > 1 && hx >= 0 && hx < W && hy >= 0 && hy < H)
+            m.bits[hy * W + hx] = 0;
+        }
       }
       return m.field();
     }
     case "Barcode": {
       // Bars of random widths, sliced into bands that glitch sideways.
+      const widest = int("width", 1, 8),
+        n = int("bands", 1, 10),
+        glitch = knob("glitch", 0, 0.8);
       const bars: number[] = [];
       while (bars.length < W * 2) {
-        const w = 1 + Math.floor(r() * 4),
+        const w = 1 + Math.floor(r() * widest),
           on = bars.length % 2 === 0 ? 1 : 0;
         for (let i = 0; i < w; i++) bars.push(on);
         if (r() < 0.04) for (let i = 0; i < 6; i++) bars.push(0);
       }
-      const bands = Array.from({ length: 3 + Math.floor(r() * 5) }, () => ({
+      const bands = Array.from({ length: n }, () => ({
         h: r(),
-        shift: Math.floor((r() - 0.5) * W * 0.4),
+        shift: Math.floor((r() - 0.5) * W * glitch),
       }));
       const total = bands.reduce((s, b) => s + b.h, 0);
       let acc = 0;
@@ -635,15 +766,20 @@ function field(title: string, style: number, W: number, H: number): Field {
         binary: true,
         value: (x, y) => {
           const band = edges.findIndex((e) => y < e);
-          return bars[(x + bands[Math.max(0, band)].shift + W) % bars.length];
+          return bars[
+            (((x + bands[Math.max(0, band)].shift) % bars.length) +
+              bars.length) %
+              bars.length
+          ];
         },
       };
     }
     case "Blocks": {
       // Isometric "tumbling blocks": each hexagon splits into three shaded faces.
-      const sz = Math.max(5, H / (3 + r() * 4)),
-        tones = [0.9, 0.5, 0.12];
-      const rot = Math.floor(r() * 3);
+      const sz = Math.max(3, H / knob("blocks", 1.5, 10)),
+        rot = int("light", 0, 2),
+        contrast = knob("contrast", 0.2, 1);
+      const tones = [0.5 + 0.4 * contrast, 0.5, 0.5 - 0.38 * contrast];
       return {
         binary: false,
         value: (x, y) => {
@@ -670,13 +806,19 @@ function field(title: string, style: number, W: number, H: number): Field {
     case "Harmonograph": {
       // Two damped pendulums per axis, like the Victorian drawing machine.
       const m = new Mask(W, H);
-      const f = [0, 1, 2, 3].map(
-        () => 1 + Math.floor(r() * 4) + (r() - 0.5) * 0.02,
-      );
-      const ph = [0, 1, 2, 3].map(() => r() * 6.28),
-        damp = 0.0015 + r() * 0.002;
-      const sx = W * 0.23,
-        sy = H * 0.23;
+      const f = [
+        int("x1", 1, 6),
+        int("x2", 1, 6),
+        int("y1", 1, 6),
+        int("y2", 1, 6),
+      ];
+      const detune = knob("detune", 0, 0.05),
+        damp = knob("damping", 0.0003, 0.005),
+        size = knob("size", 0.1, 0.35);
+      const drift = f.map((v) => v + (r() - 0.5) * detune);
+      const ph = [0, 1, 2, 3].map(() => r() * TAU);
+      const sx = W * size,
+        sy = H * size;
       let px = 0,
         py = 0;
       for (let i = 0; i < 9000; i++) {
@@ -684,10 +826,14 @@ function field(title: string, style: number, W: number, H: number): Field {
           e = Math.exp(-damp * i);
         const x =
           W / 2 +
-          sx * e * (Math.sin(f[0] * t + ph[0]) + Math.sin(f[1] * t + ph[1]));
+          sx *
+            e *
+            (Math.sin(drift[0] * t + ph[0]) + Math.sin(drift[1] * t + ph[1]));
         const y =
           H / 2 +
-          sy * e * (Math.sin(f[2] * t + ph[2]) + Math.sin(f[3] * t + ph[3]));
+          sy *
+            e *
+            (Math.sin(drift[2] * t + ph[2]) + Math.sin(drift[3] * t + ph[3]));
         if (i > 0) m.line(px, py, x, y);
         px = x;
         py = y;
@@ -695,8 +841,19 @@ function field(title: string, style: number, W: number, H: number): Field {
       return m.field();
     }
     default:
-      return field(title, 0, W, H);
+      return field(seed, 0, W, H, params, report);
   }
+}
+
+/** The knobs a style has, with the values this seed and params give them. */
+export function coverKnobs(
+  style: number,
+  seed: number,
+  params: CoverParams = {},
+): CoverKnob[] {
+  const report: CoverKnob[] = [];
+  field(seed, style, 24, 12, params, report);
+  return report;
 }
 
 /** Draw a cover into a canvas at W×H pixels (scale it up with CSS or `scale`). */
@@ -713,7 +870,13 @@ export function drawCover(
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const img = ctx.createImageData(W, H);
-  const { value, binary } = field(title, look.style, W, H);
+  const { value, binary } = field(
+    look.seed ?? hash(title),
+    look.style,
+    W,
+    H,
+    look.params,
+  );
   const fg = hexToRgb(look.palette.fg);
   const bg = hexToRgb(look.palette.bg);
   for (let y = 0; y < H; y++) {

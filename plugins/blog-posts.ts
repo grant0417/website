@@ -23,7 +23,8 @@ export type CompiledPost = {
   description: string;
   date: string;
   tags: string[];
-  cover?: string;
+  /** A style name, or `{ style, seed, palette, ...knobs }`. */
+  cover?: string | Record<string, string | number>;
   draft: boolean;
   minutes: number;
   html: string;
@@ -129,7 +130,12 @@ function compile(file: string): CompiledPost {
     description: String(data.description ?? ""),
     date,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
-    cover: data.cover ? String(data.cover) : undefined,
+    cover:
+      data.cover && typeof data.cover === "object"
+        ? data.cover
+        : data.cover
+          ? String(data.cover)
+          : undefined,
     draft: Boolean(data.draft),
     minutes: Math.max(1, Math.round(words / 230)),
     html: String(processor.processSync(content)),

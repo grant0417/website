@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { notFound } from "@tanstack/react-router";
 import posts from "virtual:blog-posts";
+import type { CoverSpec } from "@/lib/covers";
 
 export type PostSummary = {
   slug: string;
@@ -8,7 +9,7 @@ export type PostSummary = {
   description: string;
   date: string;
   tags: string[];
-  cover?: string;
+  cover?: CoverSpec;
   draft: boolean;
   minutes: number;
 };
