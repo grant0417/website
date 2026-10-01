@@ -1,150 +1,184 @@
-import { createFileRoute } from "@tanstack/react-router";
-import Project from "@/components/project";
-import Divider from "@/components/divider";
+import { useEffect, useRef, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { getContributions } from "@/lib/contributions";
+import { busiestDay, STEP_MS, Synth, type Voice } from "@/lib/synth";
+import { RidgeField, type RidgeFieldHandle } from "@/components/ridge-field";
+import { PalettePicker, usePalette } from "@/components/palette-picker";
 
 export const Route = createFileRoute("/")({
   component: Home,
+  loader: () => getContributions(),
   head: () => ({ meta: [{ title: "Grant Gurvis" }] }),
 });
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <section
-      className="flex flex-col space-y-8 pb-4 pt-5"
-      id={title.toLowerCase()}
-    >
-      <h2 className="text-white text-3xl font-bold">{title}</h2>
-      {children}
-    </section>
-  );
-}
+const VOICES: { label: string; voice: Voice }[] = [
+  { label: "Bell", voice: "bell" },
+  { label: "Pluck", voice: "pluck" },
+  { label: "Soft", voice: "soft" },
+];
+
+const LEVEL_OPACITY = [0.08, 0.25, 0.45, 0.7, 1];
+
+const button =
+  "min-h-11 cursor-pointer whitespace-nowrap border-2 border-(--fg) px-[18px] font-pixel text-sm";
 
 function Home() {
-  return (
-    <main>
-      <div className="flex flex-col gap-4 max-w-2xl px-1 sm:px-2 mx-auto m-10">
-        <div className="flex flex-col items-center px-4 pt-8 pb-4 gap-4">
-          <h1 className="text-white text-5xl font-bold">Grant Gurvis</h1>
+  const { weeks, total } = Route.useLoaderData();
+  const [palette, setPalette] = usePalette("Cobalt");
+  const [voice, setVoice] = useState<Voice>("bell");
+  const [playing, setPlaying] = useState(false);
+  const [week, setWeek] = useState(-1);
 
-          <p className="text-white text-xl font-light text-center max-w-xl">
-            Interested in Rust 🦀 and more
-          </p>
+  const field = useRef<RidgeFieldHandle>(null);
+  const synth = useRef<Synth | null>(null);
+  const voiceRef = useRef(voice);
+  voiceRef.current = voice;
+
+  useEffect(() => {
+    if (!playing) return;
+    let w = week >= weeks.length - 1 ? -1 : week;
+    const id = setInterval(() => {
+      w = (w + 1) % weeks.length;
+      const { day, level } = busiestDay(weeks[w]);
+      synth.current?.playWeek(weeks[w], w, voiceRef.current);
+      field.current?.note(w, day, level);
+      setWeek(w);
+    }, STEP_MS);
+    return () => clearInterval(id);
+    // `week` is only the resume point; re-running on every step would reset the timer.
+  }, [playing, weeks]);
+
+  useEffect(() => () => synth.current?.close(), []);
+
+  const toggle = () => {
+    if (!playing) {
+      synth.current ??= new Synth();
+      synth.current.start();
+    }
+    setPlaying(!playing);
+  };
+
+  return (
+    <div
+      className="flex min-h-screen flex-col bg-(--bg) font-display text-(--fg)"
+      style={{ "--fg": palette.fg, "--bg": palette.bg } as React.CSSProperties}
+    >
+      <div className="relative border-b-[3px] border-(--fg)">
+        <RidgeField ref={field} weeks={weeks} palette={palette} />
+        <div className="border-t-[3px] border-(--fg) bg-(--bg) px-4 pt-3 pb-4 sm:absolute sm:bottom-[clamp(16px,3vw,44px)] sm:left-[clamp(16px,3vw,44px)] sm:border-[3px] sm:px-[22px] sm:pt-4 sm:pb-5">
+          <h1 className="m-0 text-[clamp(56px,9vw,150px)] leading-[0.8] font-black uppercase [font-stretch:62%]">
+            Grant Gurvis
+          </h1>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 place-items-center gap-4 px-4 pb-4">
+        <PalettePicker
+          palette={palette}
+          onChange={setPalette}
+          className="absolute top-[clamp(16px,3vw,44px)] right-[clamp(16px,3vw,44px)] border-[3px] border-(--fg) bg-(--bg) p-1.5 max-sm:hidden"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 border-b-[3px] border-(--fg) px-[clamp(16px,3vw,44px)] py-3.5">
+        <button
+          type="button"
+          onClick={toggle}
+          className={`${button} bg-(--fg) text-(--bg)`}
+        >
+          {playing ? "❚❚ Pause" : "▶ Play my year"}
+        </button>
+        {VOICES.map((v) => (
+          <button
+            key={v.voice}
+            type="button"
+            aria-pressed={voice === v.voice}
+            onClick={() => setVoice(v.voice)}
+            className={`${button} aria-pressed:bg-(--fg) aria-pressed:text-(--bg)`}
+          >
+            {v.label}
+          </button>
+        ))}
+        <div
+          className="grid min-w-0 flex-[1_1_360px] grid-flow-col grid-rows-[repeat(7,6px)] gap-0.5"
+          style={{
+            gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))`,
+          }}
+          aria-hidden="true"
+        >
+          {weeks.flatMap((days, w) =>
+            days.map((level, d) => (
+              <span
+                key={`${w}-${d}`}
+                className="bg-(--fg)"
+                style={{
+                  opacity:
+                    w === week
+                      ? 1
+                      : LEVEL_OPACITY[level] *
+                        (week >= 0 && w > week ? 0.5 : 1),
+                }}
+              />
+            )),
+          )}
+        </div>
+        <span className="font-pixel text-[13px] whitespace-nowrap">
+          wk {Math.max(0, week + 1)}/{weeks.length}
+          {total > 0 && ` · ${total.toLocaleString("en-US")} contributions`}
+        </span>
+        <PalettePicker
+          palette={palette}
+          onChange={setPalette}
+          className="sm:hidden"
+        />
+      </div>
+
+      <div className="grid flex-grow grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
+        <section className="flex flex-col gap-2.5 p-[clamp(20px,3vw,40px)] sm:col-span-2 sm:border-r-[3px] sm:border-(--fg)">
+          <span className="font-pixel text-[13px]">work</span>
+          <a
+            href="https://hercules.app"
+            className="flex justify-between gap-3 border-b border-(--fg) px-1 pt-1 pb-2 text-[22px] hover:bg-(--fg) hover:text-(--bg)"
+          >
+            <span>
+              <b>Hercules</b> · Co-founder &amp; CTO
+            </span>
+            <span>2025–</span>
+          </a>
+          <div className="flex justify-between gap-3 border-b border-(--fg) px-1 pt-1 pb-2 text-[22px]">
+            <span>
+              <b>AWS</b> · Engineer
+            </span>
+            <span>2023–25</span>
+          </div>
+          <div className="flex justify-between gap-3 border-b border-(--fg) px-1 pt-1 pb-2 text-[22px]">
+            <span>
+              <b>Fig</b> · Engineer
+            </span>
+            <span>2021–23</span>
+          </div>
+        </section>
+        <nav className="flex flex-col items-start gap-1.5 p-[clamp(20px,3vw,40px)] font-pixel text-[17px]">
+          <span className="mb-1.5 text-[13px]">elsewhere</span>
           {[
-            {
-              text: "GitHub",
-              url: "https://github.com/grant0417",
-              logo: "🧑🏻‍💻",
-            },
-            {
-              text: "Twitter",
-              url: "https://twitter.com/gurgrant",
-              logo: "🐦",
-            },
-            {
-              text: "LinkedIn",
-              url: "https://www.linkedin.com/in/grant-gurvis/",
-              logo: "💼",
-            },
-            {
-              text: "Email",
-              url: "mailto:grant@gurvis.net",
-              logo: "✉️",
-            },
-          ].map((link, index) => (
+            ["GitHub", "https://github.com/grant0417"],
+            ["Twitter", "https://twitter.com/gurgrant"],
+            ["LinkedIn", "https://www.linkedin.com/in/grant-gurvis/"],
+            ["Email", "mailto:grant@gurvis.net"],
+          ].map(([label, href]) => (
             <a
-              key={index}
-              className="text-white hover:text-blue-200 text-lg flex flex-row items-baseline align-middle gap-1"
-              href={link.url}
+              key={label}
+              href={href}
+              className="px-1 py-0.5 hover:bg-(--fg) hover:text-(--bg)"
             >
-              {link.logo && `${link.logo} `}
-              {link.text}
+              {label} ↗
             </a>
           ))}
-        </div>
-        <Divider />
-        <Section title="Work">
-          <Project
-            title="Stealth Startup"
-            date="2025-present"
-            /* description=""
-            links={[]} */
-          />
-          <Project
-            title="Amazon Web Services"
-            date="2023-2025"
-            /* description=""
-            links={[]} */
-          />
-          <Project
-            title="Fig"
-            date="2021-2023"
-            /* description="Aquired by Amazon Web Services"
-            links={[]} */
-          />
-        </Section>
-        {/*         <Section title="Projects">
-          <Project
-            title="Ray Tracer"
-            description="A path
-          tracer that supports parallel execution, .obj loading, BVH
-          acceleration with a command line interface that will support most file
-          types for output as well as a WASM based site."
-            links={[
-              {
-                text: "Github",
-                url: "https://github.com/grant0417/ray_tracer",
-                icon: <GithubIcon />,
-              },
-              {
-                text: "Demo",
-                url: "https://rust-ray-tracer.netlify.app/",
-                icon: <PlayIcon />,
-              },
-            ]}
-          />
-          <Project
-            title="Chess AI"
-            description="A Chess AI
-          that is still quite early in development, it can currently generate
-          millions of moves per second to analyze."
-            links={[
-              {
-                text: "Github",
-                url: "https://github.com/grant0417/chess-ai",
-                icon: <GithubIcon />,
-              },
-            ]}
-          />
-          <Project
-            title="6502 Assembler and Emulator"
-            description="The assembler compiles 6502 assembly into a binary for the emulator or 
-            hex codes with debugging information. The emulator also supports all
-            6502 opcodes and addressing modes while being cycle-accurate. The CPU
-            is easily extended via memory maps."
-            links={[
-              {
-                text: "Assembler GitHub",
-                url: "https://github.com/grant0417/assembler6502",
-                icon: <GithubIcon />,
-              },
-              {
-                text: "Emulator GitHub",
-                url: "https://github.com/grant0417/emu6502",
-                icon: <GithubIcon />,
-              },
-            ]}
-            pills={[<RustPill key={0} />]}
-          />
-        </Section> */}
+          <Link
+            to="/powder"
+            className="px-1 py-0.5 hover:bg-(--fg) hover:text-(--bg)"
+          >
+            Powder →
+          </Link>
+        </nav>
       </div>
-    </main>
+    </div>
   );
 }

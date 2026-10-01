@@ -17,6 +17,16 @@ export const Route = createRootRoute({
       { name: "darkreader-lock", content: "true" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Silkscreen&display=swap",
+      },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/images/icon.png" },
     ],
@@ -42,14 +52,18 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 // Pages set their own <title>; React hoists this one into <head>.
 function NotFound() {
   return (
-    <main className="bg-zinc-950 min-h-screen flex flex-col justify-center">
+    <main className="flex min-h-screen flex-col items-start justify-end gap-6 bg-[#0E0E0E] p-[clamp(20px,4vw,56px)] font-display text-[#E8E6E0]">
       <title>404 - Page not found</title>
-      <div className="flex flex-col text-center gap-2">
-        <h1 className="text-5xl font-bold text-white">Page not found</h1>
-        <Link to="/" className="text-2xl text-white underline">
-          {"< Go back to the homepage"}
-        </Link>
-      </div>
+      <span className="font-pixel text-sm">404</span>
+      <h1 className="m-0 text-[clamp(72px,12vw,200px)] leading-[0.8] font-black uppercase [font-stretch:62%]">
+        Page not found
+      </h1>
+      <Link
+        to="/"
+        className="border-[3px] border-[#E8E6E0] px-4 py-3 font-pixel text-base hover:bg-[#E8E6E0] hover:text-[#0E0E0E]"
+      >
+        ← Back home
+      </Link>
     </main>
   );
 }
