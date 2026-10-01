@@ -36,6 +36,18 @@ const EXAMPLES = [
   "Testing a sandbox with fourteen asserts",
   "A pixel cog in 144 squares",
   "Two colors are enough",
+  "Server functions on the edge",
+  "What a falling grain of sand knows",
+  "A thousand tiny canvases",
+  "The fastest way to draw a line",
+  "Notes from the stealth years",
+  "Making Play feel instant",
+  "Cache it for an hour",
+  "Shipping a homepage in an afternoon",
+  "Bayer matrices by hand",
+  "Ripples that don't pop",
+  "Pins, palettes and hashes",
+  "One more cover style",
 ];
 
 function Tile({
@@ -108,8 +120,8 @@ function Covers() {
           </h1>
           <p className="m-0 max-w-[70ch] text-base text-(--muted)">
             Every post's cover comes from its title: a style, a palette and the
-            style's settings. Type a title to preview it in all twelve styles,
-            and save any as a 1200×600 PNG.
+            style's settings. Type a title to preview it in every style, and
+            save any as a 1200×600 PNG.
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-4">
