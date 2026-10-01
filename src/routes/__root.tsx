@@ -13,7 +13,7 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "description", content: "Grant Gurvis" },
       { name: "theme-color", content: "black" },
-      { name: "color-scheme", content: "dark" },
+      { name: "color-scheme", content: "light dark" },
       { name: "darkreader-lock", content: "true" },
     ],
     links: [
